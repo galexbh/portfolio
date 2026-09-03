@@ -96,10 +96,17 @@ const nodes = capabilityNodes.map((node, i) => {
 </header>
 
 <script>
+  // Guards against the 3D scene ever activating (or the SVG ever being hidden)
+  // more than once per page load, no matter how boot()/run() end up invoked —
+  // defense in depth on top of the {once:true} listener below.
+  let started = false;
+  let active = false;
+
   async function boot() {
     const heroGraph = document.querySelector<HTMLElement>('.hero-graph');
     const mount = document.querySelector<HTMLElement>('[data-graph-3d]');
-    if (!heroGraph || !mount) return;
+    const svg = document.querySelector<SVGElement>('.graph-svg');
+    if (!heroGraph || !mount || !svg) return;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (window.innerWidth < 900) return;
@@ -117,15 +124,28 @@ const nodes = capabilityNodes.map((node, i) => {
       return;
     }
 
+    // Imperative, unconditional show/hide — not just a CSS class toggle — so
+    // there is no timing window in which both the SVG fallback and the 3D
+    // scene can be visible at once, regardless of how/when this fires.
+    const setActive = (next: boolean) => {
+      active = next;
+      heroGraph.classList.toggle('graph-3d-active', next);
+      svg.style.opacity = next ? '0' : '';
+      svg.style.pointerEvents = next ? 'none' : '';
+    };
+
     const run = async () => {
+      if (started) return;
+      started = true;
       const { initHeroGraph3D } = await import('../scripts/hero-graph-3d');
-      const onFail = () => heroGraph.classList.remove('graph-3d-active');
+      if (active) return; // guard against a duplicate run() resolving twice
+      const onFail = () => setActive(false);
       const dispose = initHeroGraph3D(mount, nodes, onFail);
       if (dispose) {
         // Wait two frames past a real render before swapping, so we never hide
         // the SVG in favor of a canvas that hasn't actually painted anything.
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          heroGraph.classList.add('graph-3d-active');
+          setActive(true);
         }));
       }
     };

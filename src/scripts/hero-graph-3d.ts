@@ -36,7 +36,16 @@ const WORLD_R = 1.55;
 const NODE_RADIUS = 0.1;
 const EDGE_SEGMENTS = 32;
 const DRAW_DURATION = 1.6; // seconds, matches the SVG's edge draw-in
-const BASE_ROTATION_SPEED = 0.06; // rad/s
+// The group sways gently back and forth instead of spinning continuously.
+// A full unbounded rotation eventually swings every node's azimuth past the
+// root's own screen position (and past each other), causing a periodic,
+// fully deterministic overlap — verified: at BASE_ROTATION_SPEED = 0.06 rad/s
+// the closest node crosses the root's projection at ~16.5s of elapsed time.
+// A bounded sway keeps the "alive" motion and the depth/parallax cue while
+// staying far inside every node's crossing threshold (smallest is ~0.99 rad
+// for this node layout) — SWAY_AMPLITUDE below has a wide safety margin.
+const SWAY_AMPLITUDE = 0.16; // rad, ~9°
+const SWAY_PERIOD = 16; // seconds for a full back-and-forth cycle
 const PARALLAX_MAX = 0.22; // rad
 const PARALLAX_LERP = 0.06;
 const CAMERA_Z = 8;
@@ -186,7 +195,8 @@ export function initHeroGraph3D(
 
     tiltX += (targetTiltX - tiltX) * PARALLAX_LERP;
     tiltY += (targetTiltY - tiltY) * PARALLAX_LERP;
-    group.rotation.y = elapsed * BASE_ROTATION_SPEED + tiltY;
+    const sway = Math.sin((elapsed / SWAY_PERIOD) * Math.PI * 2) * SWAY_AMPLITUDE;
+    group.rotation.y = sway + tiltY;
     group.rotation.x = tiltX;
 
     rigs.forEach((rig, i) => {
