@@ -1,0 +1,12 @@
+role: Ingeniero DevOps
+company: Punto HN
+period: Ene 2024 – Nov 2025
+location: Tegucigalpa, HN
+current: false
+bullets:
+  - 'Administración de entornos híbridos multi-nube: Contabo, AWS, Azure.'
+  - Acceso remoto Zero Trust con Cloudflare Tunnels, sin VPN tradicional.
+  - Monitoreo automatizado con alertas en tiempo real vía Telegram.
+  - Liderazgo de un equipo de 3 practicantes universitarios.
+metrics:
+  - '-35% en tiempo de respuesta a incidentes'

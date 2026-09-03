@@ -1,0 +1,13 @@
+role: Administrador de Aplicaciones
+company: INFATLAN
+period: Nov 2025 – Sept 2026
+location: Tegucigalpa, HN
+current: false
+bullets:
+  - 'Administración de plataformas en contenedores: OpenShift, Kubernetes, Minikube.'
+  - Administración de sistemas Linux y Windows.
+  - Coordinación de incidentes críticos con Arquitectura, Cumplimiento y Gerencia de TI.
+  - Documentación de RCA formales bajo gobierno ITIL/SRE.
+  - Monitoreo y gestión del rendimiento de aplicaciones e infraestructura.
+  - Gestión de incidencias y controles de cambio en Jira.
+metrics: []

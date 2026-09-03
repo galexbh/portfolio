@@ -1,0 +1,5 @@
+name: zabbix-installation
+category: Observabilidad / Monitoreo
+language: ''
+description: Scripts de instalación y configuración de Zabbix para monitoreo de infraestructura.
+repo: https://github.com/galexbh/zabbix-installation

@@ -1,0 +1,5 @@
+name: Operación multi-cloud AWS/Azure
+category: Cloud
+role: SRE actual
+stack: AWS, Azure, OpenShift
+result: pendiente de documentar (disponibilidad, incidentes resueltos).

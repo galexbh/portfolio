@@ -1,0 +1,5 @@
+name: ocr-plugin-flameshot
+category: Herramientas / Productividad
+language: Shell
+description: Plugin que añade extracción de texto (OCR) a Flameshot.
+repo: https://github.com/galexbh/ocr-plugin-flameshot

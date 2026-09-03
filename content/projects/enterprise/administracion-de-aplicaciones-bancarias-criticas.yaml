@@ -1,0 +1,5 @@
+name: Administración de aplicaciones bancarias críticas
+category: Plataformas
+role: Administrador de Aplicaciones
+stack: OpenShift, Kubernetes, Minikube, Linux, Windows
+result: continuidad operativa y cumplimiento de políticas de TI en entorno bancario regulado.

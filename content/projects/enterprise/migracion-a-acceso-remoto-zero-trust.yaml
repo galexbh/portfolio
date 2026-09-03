@@ -1,0 +1,5 @@
+name: Migración a acceso remoto Zero Trust
+category: Seguridad
+role: DevOps (Punto HN)
+stack: Cloudflare Tunnels
+result: eliminación de VPN tradicional para el equipo.

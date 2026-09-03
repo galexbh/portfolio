@@ -1,0 +1,5 @@
+name: Automatización de infraestructura con Ansible
+category: Automatización
+role: SRE actual
+stack: Ansible
+result: pendiente de documentar (playbooks creados, tareas automatizadas, tiempo ahorrado).

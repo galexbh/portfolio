@@ -1,0 +1,11 @@
+role: Técnico Jr
+company: Punto HN
+period: Feb 2023 – Dic 2023
+location: Tegucigalpa, HN
+current: false
+bullets:
+  - Configuración de firewalls perimetrales Sophos y Fortinet.
+  - Soporte de ciberseguridad para entornos Microsoft 365.
+  - Desarrollo de sitios web institucionales con pasarela de pagos.
+metrics:
+  - '-20% en incidentes de seguridad reportados'

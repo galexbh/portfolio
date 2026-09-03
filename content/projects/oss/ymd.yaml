@@ -1,0 +1,5 @@
+name: ymd
+category: Herramientas
+language: TypeScript
+description: Interfaz de interacción con yt-dlp.
+repo: https://github.com/galexbh/ymd

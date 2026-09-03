@@ -1,0 +1,5 @@
+name: Observabilidad end-to-end con Dynatrace
+category: Observabilidad
+role: SRE actual
+stack: Dynatrace
+result: pendiente de documentar (MTTD/MTTR, incidentes detectados proactivamente).

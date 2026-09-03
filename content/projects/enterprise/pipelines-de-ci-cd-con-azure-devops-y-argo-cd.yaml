@@ -1,0 +1,5 @@
+name: Pipelines de CI/CD con Azure DevOps y Argo CD
+category: CI/CD
+role: SRE actual
+stack: Azure DevOps, Argo CD, OpenShift
+result: pendiente de documentar (frecuencia de releases, tasa de fallos).

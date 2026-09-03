@@ -1,0 +1,5 @@
+name: OpenSight
+category: Plataformas / OpenShift
+language: Python
+description: Herramienta de línea de comandos que inventaría automáticamente los recursos clave de proyectos en un clúster de OpenShift.
+repo: https://github.com/galexbh/OpenSight

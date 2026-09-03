@@ -1,0 +1,12 @@
+role: Site Reliability Engineer
+company: INFATLAN
+period: Sept 2026 – Actualidad
+location: Tegucigalpa, HN
+current: true
+bullets:
+  - 'Cloud: soporte y operación de infraestructura en AWS y Azure.'
+  - 'CI/CD: pipelines en Azure DevOps y despliegues continuos con Argo CD.'
+  - 'Observabilidad: monitoreo y alertas con Dynatrace.'
+  - 'Contenedores: administración de clústeres OpenShift.'
+  - 'Automatización: playbooks de Ansible para configuración e infraestructura.'
+metrics: []
