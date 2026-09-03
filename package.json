@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
-    "keystatic": "cross-env KEYSTATIC_ADMIN=1 astro dev"
+    "preview": "npm run build && wrangler dev --config dist/server/wrangler.json",
+    "deploy": "npm run build && wrangler deploy --config dist/server/wrangler.json",
+    "keystatic": "astro dev"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14.2.6",
     "@astrojs/react": "^6.0.5",
     "@keystatic/astro": "^6.0.0",
     "@keystatic/core": "^0.6.9",
@@ -19,7 +20,6 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "cross-env": "^10.1.0",
     "wrangler": "^4.128.0"
   }
 }

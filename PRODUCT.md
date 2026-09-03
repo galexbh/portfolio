@@ -40,7 +40,7 @@ Not a generic "full-stack developer" portfolio template. The differentiator is r
 ## Evidence on Hand
 
 - `portfolio-spec.md` — full content spec (identity, hero, about, experience, skills, projects, certifications, education, contact, exclusions, design notes).
-- `assets/photo_2026-09-03_01-04-15.jpg` through `-18.jpg` — four real candid photos of Gabriel; `-15` is the only one suited to a professional hero (neutral pose, clean lighting, plain background); the other three are casual/informal shots (tongue out, hand gestures, low light) and are not used as-is.
+- `assets/photo_2026-09-03_01-04-15.jpg` through `-18.jpg` — four real candid photos of Gabriel. `-17` is the one selected for the hero (Gabriel's own choice): a confident half-smile with a heart-hand gesture, moodier/dim lighting that actually reads well once cropped and vignetted for the site's dark palette. The others are unused: `-15` is a plainer, neutral-lit alternative; `-16` and `-18` are more casual/informal (tongue out, peace-sign) and weren't used as-is.
 - No CV PDF, no logo, no existing brand assets currently in the repo — CV link and any logo are placeholders/TBD until provided.
 
 ## Product Principles

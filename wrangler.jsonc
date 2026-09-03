@@ -2,7 +2,5 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "galexbh-portfolio",
   "compatibility_date": "2026-08-31",
-  "assets": {
-    "directory": "dist"
-  }
+  "compatibility_flags": ["nodejs_compat"]
 }
