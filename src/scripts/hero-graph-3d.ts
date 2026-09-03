@@ -187,7 +187,6 @@ export function initHeroGraph3D(
   }
   document.addEventListener('visibilitychange', onVisibility);
 
-  const startTime = performance.now();
   let raf = 0;
   let disposed = false;
 
@@ -196,7 +195,14 @@ export function initHeroGraph3D(
     raf = requestAnimationFrame(frame);
     if (!visible) return;
 
-    const elapsed = (performance.now() - startTime) / 1000;
+    // performance.now() is already relative to navigation start, not to when
+    // this scene happened to initialize — deliberately NOT rebased to a local
+    // t=0 here. The SVG's own draw-in (a plain CSS animation) starts at page
+    // load and is done well before the deferred 3D chunk ever activates, so
+    // reusing the same real-time origin means the edges read as already
+    // fully drawn the instant the swap happens, instead of visibly resetting
+    // to blank and replaying the reveal on top of an already-finished graph.
+    const elapsed = performance.now() / 1000;
 
     tiltX += (targetTiltX - tiltX) * PARALLAX_LERP;
     tiltY += (targetTiltY - tiltY) * PARALLAX_LERP;
