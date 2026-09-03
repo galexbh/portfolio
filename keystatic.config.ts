@@ -139,6 +139,14 @@ export default config({
       schema: {
         title: fields.slug({ name: { label: 'Título' } }),
         date: fields.date({ label: 'Fecha' }),
+        category: fields.select({
+          label: 'Categoría',
+          options: [
+            { label: 'SRE / DevOps', value: 'sre-devops' },
+            { label: 'Personal', value: 'personal' },
+          ],
+          defaultValue: 'sre-devops',
+        }),
         excerpt: fields.text({ label: 'Resumen', multiline: true }),
         cover: fields.image({
           label: 'Portada',

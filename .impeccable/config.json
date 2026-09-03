@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "rgba(34, 211, 238, 0.35)",
+        "createdAt": "2026-09-03T10:41:03.922Z",
+        "reason": "intentional: activates the previously-unused --accent-strong cyan token as the 'Personal' blog category accent, distinct from mint (SRE/DevOps) and reserved amber (restricted/enterprise)"
+      }
+    ]
+  }
+}

@@ -21,10 +21,18 @@ Estilo general en todos los prompts: minimalista, geométrico, línea fina (1–
 oscuro casi negro, sin gradientes vistosos, sin glassmorphism, sin iconografía genérica de
 "IA" (sin cerebros, sin circuitos brillantes cliché) — se trata de diagramas de topología de
 red / dependencias de servicio reales, tipo mapa de service mesh o dashboard de
-observabilidad, no arte fantástico ni fotografía de stock. El ámbar está reservado
-exclusivamente para marcar un único nodo como "en incidente / restringido" dentro de una
-composición — nunca como color dominante, wash de fondo, ni sinónimo de "pasado" o "error"
-genérico (ver la Amber Exception Rule de `DESIGN.md`).
+observabilidad, no arte fantástico ni fotografía de stock. El ámbar `#f5b942` NO se usa en
+ninguna imagen del blog — está reservado exclusivamente para el badge de proyectos
+empresariales/restringidos (ver la Amber Exception Rule de `DESIGN.md`), un concepto que no
+existe en el blog.
+
+El blog tiene dos categorías reales (`category` en Keystatic: `sre-devops` / `personal`),
+cada una con su propio acento ya cableado en el código:
+- **SRE / DevOps** → mint `#5eead4` (el acento por defecto de todo el sitio).
+- **Personal** → cian `#22d3ee` (el segundo acento con nombre propio, documentado en
+  `DESIGN.md` como "Secondary Cyan" — antes un token declarado sin usar, ahora activo). Los
+  prompts de portada para posts personales deben usar cian como acento en vez de mint, no
+  como un color más entre varios.
 
 ---
 
@@ -81,29 +89,26 @@ otra proporción.
 
 ---
 
-## 3. Portadas por tema — plantilla con variantes
+## 3. Portadas temáticas — SRE / DevOps
 
-**Propósito y ubicación:** portadas específicas (`cover` en Keystatic) para posts agrupados
-por los temas plausibles de un SRE de banca regulada: gobernanza de incidentes / RCA,
-observabilidad, CI/CD, automatización de infraestructura. Cada variante reutiliza la misma
-composición base de nodo-y-conectores, cambiando solo el detalle temático entre corchetes —
-no se refieren a títulos de post concretos (que no existen), sino a la categoría/tema.
+**Propósito y ubicación:** portadas específicas (`cover` en Keystatic, categoría
+`sre-devops`) para posts técnicos: observabilidad, CI/CD, automatización de infraestructura,
+contenedores/orquestación. Pensado para un blog activo y variado, no solo banca regulada —
+estos temas aplican a cualquier nota técnica de SRE/DevOps. Cada variante reutiliza la misma
+composición base de nodo-y-conectores en mint, cambiando solo el detalle temático entre
+corchetes — no se refieren a títulos de post concretos, sino a la categoría/tema.
 
 **Prompt (plantilla, repetir cambiando el concepto entre corchetes):**
 > A dark technical cover image, near-black background (#090c0f), for a blog post about
-> [an incident postmortem / RCA-themed topic / an observability and monitoring topic / a
-> CI-CD pipeline topic / an infrastructure-automation topic], drawn as a network-topology
-> diagram: one central hollow circle node (mint #5eead4 ring, 1.5px stroke) connected by thin
-> lines to several smaller nodes, arranged asymmetrically like a service dependency map.
+> [an observability and monitoring topic / a CI-CD pipeline topic / an infrastructure-
+> automation topic / a container orchestration topic], drawn as a network-topology diagram:
+> one central hollow circle node (mint #5eead4 ring, 1.5px stroke) connected by thin lines to
+> several smaller nodes, arranged asymmetrically like a service dependency map.
 > [Variant-specific detail — see substitutions below]. Faint 1px grid texture in the
 > background at very low opacity, calm negative space, no people, no icons, no logos, no text
 > baked into the image.
 
 **Sustituciones por tema:**
-- **Incidentes / RCA:** "one single node in the graph — not the central node — is filled
-  solid amber (#f5b942) with a thin amber halo ring around it, marking it as the one node
-  'under alert', while every other node and edge in the diagram stays mint/neutral as usual —
-  amber appears on exactly that one node, nowhere else in the frame."
 - **Observabilidad:** "small dashed-line concentric rings (mint #5eead4, very low opacity)
   emanating from two or three of the nodes, suggesting a monitoring probe or health-check
   pulse, without any glow or gradient."
@@ -113,11 +118,49 @@ no se refieren a títulos de post concretos (que no existen), sino a la categor�
 - **Automatización de infraestructura:** "two or three of the nodes are drawn as small
   hollow squares instead of circles (same 1.5px mint stroke) to suggest scripted/managed
   resources, mixed among the regular circle nodes, connected by the same thin lines."
+- **Contenedores / orquestación:** "several nodes are grouped inside a loosely drawn hollow
+  rounded-rectangle boundary (same 1.5px mint stroke), like pods clustered inside a node pool,
+  with one or two connector lines crossing the boundary to nodes outside it."
 
-**Estilo:** lineart técnico, mismo vocabulario de nodos que el hero, ámbar solo donde el tema
-sea incidentes y solo en un nodo puntual (nunca como wash de fondo).
-**Paleta:** fondo `#090c0f`, mint `#5eead4` como acento principal, ámbar `#f5b942` reservado
-al único nodo de estado en la variante de incidentes.
+**Estilo:** lineart técnico, mismo vocabulario de nodos que el hero.
+**Paleta:** fondo `#090c0f`, mint `#5eead4` como único acento.
+**Dimensiones:** 1200×630, igual criterio de recorte seguro a 16:9 que el prompt 1.
+
+---
+
+## 4. Portadas temáticas — Personal
+
+**Propósito y ubicación:** portadas para posts de la categoría `personal` en Keystatic — notas
+que no son estrictamente técnicas (reflexiones, aprendizajes, vida fuera del trabajo). Mismo
+sistema de nodos y líneas que el resto del sitio, pero en **cian `#22d3ee`** en vez de mint —
+esa es la única diferencia deliberada, ya que el cian es el acento que el código usa para
+distinguir visualmente "Personal" de "SRE / DevOps" (chip de categoría y nodo de la tarjeta en
+`/blog`). La composición también puede ser algo más suelta/orgánica que las variantes técnicas
+(menos "diagrama a resolver", más "constelación"), para reforzar el contraste de registro sin
+salirse del mismo lenguaje de línea fina.
+
+**Prompt (plantilla, repetir cambiando el concepto entre corchetes):**
+> A dark technical cover image, near-black background (#090c0f), for a personal blog post
+> about [a reflection or lessons-learned topic / a side project or hobby topic / a career or
+> learning-in-public topic], drawn in the same node-and-line visual language as a network
+> topology diagram, but in cyan (#22d3ee, 1.5px stroke) instead of mint: a loose scatter of
+> hollow circle nodes connected by thin straight lines, less rigidly hub-and-spoke than a
+> service map — more like a small constellation than an infrastructure diagram, still flat
+> and geometric, no organic curves. Faint 1px grid texture in the background at very low
+> opacity, calm negative space, no people, no icons, no logos, no text baked into the image.
+
+**Sustituciones por tema:**
+- **Reflexión / aprendizajes:** "one node sits slightly apart from the rest, connected by a
+  single longer line, suggesting a standalone thought branching off the main cluster."
+- **Proyecto personal / hobby:** "two small clusters of 3-4 nodes each, loosely linked by one
+  connector between clusters, suggesting two related but separate small systems."
+- **Carrera / aprendizaje en público:** "the nodes increase slightly in size left to right
+  across the frame, suggesting quiet progression, still connected by the same thin lines."
+
+**Estilo:** mismo vocabulario de nodos que el resto del sitio, cian en vez de mint, composición
+más suelta.
+**Paleta:** fondo `#090c0f`, cian `#22d3ee` como único acento (nunca mezclar con mint en la
+misma imagen).
 **Dimensiones:** 1200×630, igual criterio de recorte seguro a 16:9 que el prompt 1.
 
 ---

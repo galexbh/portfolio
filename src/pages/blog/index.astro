@@ -2,9 +2,15 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { getPosts } from '../../lib/keystatic-content';
+import { getPosts, postCategoryLabels } from '../../lib/keystatic-content';
 
 const posts = await getPosts();
+
+const filters = [
+  { value: 'all', label: 'Todo' },
+  { value: 'sre-devops', label: postCategoryLabels['sre-devops'] },
+  { value: 'personal', label: postCategoryLabels.personal },
+];
 
 function formatDate(iso: string) {
   const [year, month, day] = iso.split('-').map(Number);
@@ -22,7 +28,7 @@ function formatDate(iso: string) {
     <header class="blog-hero">
       <div class="wrap">
         <h1 class="blog-title">Blog</h1>
-        <p class="blog-sub">Notas de campo sobre confiabilidad, automatización y observabilidad.</p>
+        <p class="blog-sub">Notas sobre SRE, DevOps e infraestructura — y de vez en cuando algo personal.</p>
       </div>
     </header>
 
@@ -41,27 +47,43 @@ function formatDate(iso: string) {
             <p class="empty-note">Este nodo todavía no emite. Vuelve pronto.</p>
           </div>
         ) : (
-          <div class="post-grid">
-            {posts.map((post) => (
-              <a class="card post-card reveal" href={`/blog/${post.slug}`}>
-                <div class="post-mount" aria-hidden="true">
-                  <span class="post-node"></span>
-                  <span class="post-stem"></span>
-                </div>
-                {post.cover && (
-                  <img class="post-cover" src={post.cover} alt="" loading="lazy" />
-                )}
-                <p class="post-date mono">{formatDate(post.date)}</p>
-                <h2 class="post-title">{post.title}</h2>
-                <p class="post-excerpt">{post.excerpt}</p>
-              </a>
-            ))}
-          </div>
+          <>
+            <div class="filter-bar mono" role="group" aria-label="Filtrar por categoría">
+              {filters.map((f, i) => (
+                <button type="button" class="filter-btn" data-filter={f.value} aria-pressed={i === 0 ? 'true' : 'false'}>
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <div class="post-grid" data-post-grid>
+              {posts.map((post) => (
+                <a class="card post-card reveal" href={`/blog/${post.slug}`} data-category={post.category}>
+                  <div class="post-mount" aria-hidden="true">
+                    <span class:list={['post-node', { 'post-node-personal': post.category === 'personal' }]}></span>
+                    <span class="post-stem"></span>
+                  </div>
+                  {post.cover && (
+                    <img class="post-cover" src={post.cover} alt="" loading="lazy" />
+                  )}
+                  <div class="post-meta">
+                    <span class:list={['chip', 'post-chip', { 'post-chip-personal': post.category === 'personal' }]}>
+                      {postCategoryLabels[post.category] ?? post.category}
+                    </span>
+                    <p class="post-date mono">{formatDate(post.date)}</p>
+                  </div>
+                  <h2 class="post-title">{post.title}</h2>
+                  <p class="post-excerpt">{post.excerpt}</p>
+                </a>
+              ))}
+            </div>
+            <p class="filter-empty mono" data-filter-empty hidden>Nada por aquí todavía en esta categoría.</p>
+          </>
         )}
       </div>
     </section>
   </main>
   <Footer />
+  {posts.length > 0 && <script src="/scripts/blog-filter.js" is:inline></script>}
 </Base>
 
 <style>
@@ -86,6 +108,41 @@ function formatDate(iso: string) {
     padding-top: 0;
   }
 
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .filter-btn:hover {
+    color: var(--text);
+  }
+
+  .filter-btn[aria-pressed='true'] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .filter-empty {
+    color: var(--text-faint);
+    font-size: 13px;
+    margin: 24px 0 0;
+  }
+
   .post-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -99,6 +156,10 @@ function formatDate(iso: string) {
     text-decoration: none;
     color: inherit;
     transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .post-card[hidden] {
+    display: none;
   }
 
   .post-card:hover {
@@ -122,6 +183,10 @@ function formatDate(iso: string) {
     flex-shrink: 0;
   }
 
+  .post-node-personal {
+    border-color: var(--accent-strong);
+  }
+
   .post-stem {
     width: 1px;
     flex: 1;
@@ -136,6 +201,25 @@ function formatDate(iso: string) {
     border-radius: 4px;
     border: 1px solid var(--line);
     margin-bottom: 4px;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .post-chip {
+    font-size: 10.5px;
+    padding: 3px 9px;
+    color: var(--accent);
+    border-color: rgba(94, 234, 212, 0.35);
+  }
+
+  .post-chip-personal {
+    color: var(--accent-strong);
+    border-color: rgba(34, 211, 238, 0.35);
   }
 
   .post-date {

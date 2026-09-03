@@ -106,6 +106,7 @@ The palette is almost monochrome by design: a near-black neutral scale carries t
 
 ### Secondary
 - **Restricted Amber** (`#f5b942`): reserved exclusively for the "restricted / enterprise" status — the enterprise project badge and its node-mount dot. It is a named exception, not a general warning color; it never marks a "past" or completed state (an earlier build used amber for past roles and that was a confirmed defect, fixed before ship — past timeline entries use a hollow neutral dot, never amber).
+- **Secondary Cyan** (`#22d3ee`, `rgba(34, 211, 238, 0.35)` for chip borders): declared as a token from the start but unused until the blog — it now marks the "Personal" post category (node-mount ring, category chip), a second named exception alongside amber. Mint stays "SRE / DevOps" (the site's default healthy/active meaning); cyan is the one place a second hue is allowed, and only for this one category distinction. Never repurpose it as a generic second accent.
 
 ### Neutral
 - **Canvas Black** (`#090c0f`): page background, the base of the topology.

@@ -3,7 +3,7 @@ import { DocumentRenderer } from '@keystatic/core/renderer';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { getPosts, getPost } from '../../lib/keystatic-content';
+import { getPosts, getPost, postCategoryLabels } from '../../lib/keystatic-content';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -34,7 +34,12 @@ function formatDate(iso: string) {
         <a class="back-link mono" href="/blog">← volver al blog</a>
 
         <header class="post-head">
-          <p class="post-date mono">{formatDate(post.date)}</p>
+          <div class="post-meta">
+            <span class:list={['chip', 'post-chip', { 'post-chip-personal': post.category === 'personal' }]}>
+              {postCategoryLabels[post.category] ?? post.category}
+            </span>
+            <p class="post-date mono">{formatDate(post.date)}</p>
+          </div>
           <h1 class="post-title">{post.title}</h1>
         </header>
 
@@ -82,10 +87,29 @@ function formatDate(iso: string) {
     margin-bottom: 24px;
   }
 
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .post-chip {
+    font-size: 10.5px;
+    padding: 3px 9px;
+    color: var(--accent);
+    border-color: rgba(94, 234, 212, 0.35);
+  }
+
+  .post-chip-personal {
+    color: var(--accent-strong);
+    border-color: rgba(34, 211, 238, 0.35);
+  }
+
   .post-date {
     font-size: 12px;
     color: var(--text-faint);
-    margin: 0 0 10px;
+    margin: 0;
   }
 
   .post-title {

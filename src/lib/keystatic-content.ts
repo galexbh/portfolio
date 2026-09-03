@@ -129,6 +129,7 @@ export async function getPosts() {
       slug,
       title: entry.title,
       date: entry.date,
+      category: entry.category,
       excerpt: entry.excerpt,
       cover: entry.cover ? `/img/blog/${entry.cover}` : null,
       body: entry.body,
@@ -143,8 +144,14 @@ export async function getPost(slug: string) {
     slug,
     title: entry.title,
     date: entry.date,
+    category: entry.category,
     excerpt: entry.excerpt,
     cover: entry.cover ? `/img/blog/${entry.cover}` : null,
     body: entry.body,
   };
 }
+
+export const postCategoryLabels: Record<string, string> = {
+  'sre-devops': 'SRE / DevOps',
+  personal: 'Personal',
+};
