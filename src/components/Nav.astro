@@ -4,18 +4,18 @@ import { getMeta } from '../lib/keystatic-content';
 const meta = await getMeta();
 
 const links = [
-  { href: '#about', label: 'about' },
-  { href: '#experience', label: 'experience' },
-  { href: '#skills', label: 'skills' },
-  { href: '#projects', label: 'projects' },
+  { href: '/#about', label: 'about' },
+  { href: '/#experience', label: 'experience' },
+  { href: '/#skills', label: 'skills' },
+  { href: '/#projects', label: 'projects' },
   { href: '/blog', label: 'blog' },
-  { href: '#contact', label: 'contact' },
+  { href: '/#contact', label: 'contact' },
 ];
 ---
 
 <nav class="nav">
   <div class="wrap nav-inner">
-    <a href="#top" class="nav-brand mono">
+    <a href="/#top" class="nav-brand mono">
       <span class="status-dot" aria-hidden="true"></span>
       {meta.handle}
     </a>
