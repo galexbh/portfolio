@@ -35,12 +35,8 @@ const nodes = capabilityNodes.map((node, i) => {
       <div
         class="graph-3d"
         data-graph-3d
-        data-nodes={JSON.stringify(nodes.map((n) => ({ label: n.label, detail: n.detail })))}
+        data-nodes={JSON.stringify(nodes.map((n) => ({ label: n.label, detail: n.detail, x: n.x, y: n.y })))}
       >
-        <div class="graph-3d-root">
-          <img src="/img/hero-portrait.webp" alt="" width="92" height="92" />
-        </div>
-        <p class="graph-3d-root-label mono">{meta.handle}</p>
       </div>
       <svg viewBox="0 0 460 600" class="graph-svg" role="img" aria-label="Mapa de topología de capacidades de Gabriel Barrientos">
         <defs>
@@ -55,7 +51,7 @@ const nodes = capabilityNodes.map((node, i) => {
             y1={root.y}
             x2={node.x}
             y2={node.y}
-            class="edge"
+            class="edge graph-svg-enhanced"
             style={`--delay: ${i * 0.15}s`}
           />
         ))}
@@ -79,8 +75,8 @@ const nodes = capabilityNodes.map((node, i) => {
           const labelX = node.x + (align === 'start' ? 16 : align === 'end' ? -16 : 0);
           return (
             <g class="node">
-              <circle cx={node.x} cy={node.y} r="8" class="node-dot" />
-              <circle cx={node.x} cy={node.y} r="15" class="node-halo" />
+              <circle cx={node.x} cy={node.y} r="8" class="node-dot graph-svg-enhanced" />
+              <circle cx={node.x} cy={node.y} r="15" class="node-halo graph-svg-enhanced" />
               <text x={labelX} y={node.y - 4} text-anchor={align} class="node-label mono">
                 {node.label}
               </text>
@@ -96,86 +92,101 @@ const nodes = capabilityNodes.map((node, i) => {
 </header>
 
 <script>
-  // Guards against the 3D scene ever activating (or the SVG ever being hidden)
-  // more than once per page load, no matter how boot()/run() end up invoked —
-  // defense in depth on top of the {once:true} listener below.
-  let started = false;
-  let active = false;
-
-  async function boot() {
+  function boot() {
     const heroGraph = document.querySelector<HTMLElement>('.hero-graph');
     const mount = document.querySelector<HTMLElement>('[data-graph-3d]');
-    const svg = document.querySelector<SVGElement>('.graph-svg');
-    if (!heroGraph || !mount || !svg) return;
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (window.innerWidth < 900) return;
-
-    const probe = document.createElement('canvas');
-    if (!probe.getContext('webgl2')) return;
-    if ((navigator.hardwareConcurrency ?? 4) < 4) return;
+    if (!heroGraph || !mount) return;
 
     const raw = mount.dataset.nodes;
     if (!raw) return;
-    let nodes: { label: string; detail: string }[];
+    let nodes: { label: string; detail: string; x: number; y: number }[];
     try {
       nodes = JSON.parse(raw);
     } catch {
       return;
     }
 
-    // Imperative, unconditional show/hide — not just a CSS class toggle — so
-    // there is no timing window in which both the SVG fallback and the 3D
-    // scene can be visible at once, regardless of how/when this fires.
-    // display:none (not a fading opacity) so the swap is instantaneous: the
-    // 3D scene already has a real painted frame by the time this runs (two
-    // rAFs after init), so there's nothing to crossfade — a fade here only
-    // ever bought a ~400ms window where both layers sat on top of each other
-    // at full opacity, which is what actually looked like a rendering bug.
+    const enhancementQuery = window.matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
+    let disposeCurrent: (() => void) | null = null;
+    let starting = false;
+    let generation = 0;
+    let webglAvailable: boolean | null = null;
+
     const setActive = (next: boolean) => {
-      active = next;
       heroGraph.classList.toggle('graph-3d-active', next);
-      svg.style.display = next ? 'none' : '';
     };
 
-    const run = async () => {
-      if (started) return;
-      started = true;
-      const { initHeroGraph3D } = await import('../scripts/hero-graph-3d');
-      if (active) return; // guard against a duplicate run() resolving twice
-      const onFail = () => setActive(false);
-      const dispose = initHeroGraph3D(mount, nodes, onFail);
-      if (dispose) {
-        // Wait two frames past a real render before swapping, so we never hide
-        // the SVG in favor of a canvas that hasn't actually painted anything.
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          setActive(true);
-        }));
+    const canUseWebGL = () => {
+      if (webglAvailable !== null) return webglAvailable;
+      const probe = document.createElement('canvas');
+      const context = probe.getContext('webgl2');
+      webglAvailable = Boolean(context) && (navigator.hardwareConcurrency ?? 4) >= 4;
+      context?.getExtension('WEBGL_lose_context')?.loseContext();
+      return webglAvailable;
+    };
+
+    const stop = () => {
+      generation += 1;
+      starting = false;
+      setActive(false);
+      disposeCurrent?.();
+      disposeCurrent = null;
+    };
+
+    const start = async () => {
+      if (starting || disposeCurrent || !enhancementQuery.matches || !canUseWebGL()) return;
+      starting = true;
+      const runGeneration = ++generation;
+
+      try {
+        const { initHeroGraph3D } = await import('../scripts/hero-graph-3d');
+        if (runGeneration !== generation || !enhancementQuery.matches) return;
+
+        const dispose = initHeroGraph3D(
+          mount,
+          nodes,
+          () => {
+            if (runGeneration === generation && enhancementQuery.matches) setActive(true);
+          },
+          () => {
+            if (runGeneration !== generation) return;
+            setActive(false);
+            disposeCurrent = null;
+          }
+        );
+
+        if (!dispose) {
+          starting = false;
+          return;
+        }
+
+        disposeCurrent = dispose;
+      } catch {
+        if (runGeneration === generation) setActive(false);
+      } finally {
+        if (runGeneration === generation) starting = false;
       }
     };
 
-    const startWhenVisible = () => {
-      const io = new IntersectionObserver((entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          io.disconnect();
-          run();
-        }
-      });
-      io.observe(heroGraph);
+    const evaluate = () => {
+      if (!enhancementQuery.matches) {
+        stop();
+        return;
+      }
+      start();
     };
 
     if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(startWhenVisible, { timeout: 500 });
+      (window as any).requestIdleCallback(evaluate, { timeout: 250 });
     } else {
-      setTimeout(startWhenVisible, 200);
+      setTimeout(evaluate, 0);
     }
+
+    enhancementQuery.addEventListener('change', evaluate);
+    window.addEventListener('pagehide', stop, { once: true });
   }
 
-  if (document.readyState === 'complete') {
-    boot();
-  } else {
-    window.addEventListener('load', boot, { once: true });
-  }
+  boot();
 </script>
 
 <style>
@@ -199,6 +210,8 @@ const nodes = capabilityNodes.map((node, i) => {
 
   .hero-graph {
     order: 1;
+    position: relative;
+    aspect-ratio: 460 / 600;
   }
 
   .hero-title {
@@ -231,28 +244,28 @@ const nodes = capabilityNodes.map((node, i) => {
   }
 
   .graph-svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     overflow: visible;
+    z-index: 2;
   }
 
   .graph-3d {
-    display: none;
     position: absolute;
     inset: 0;
-  }
-
-  .hero-graph.graph-3d-active {
-    position: relative;
-    aspect-ratio: 460 / 600;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 160ms;
   }
 
   .hero-graph.graph-3d-active .graph-3d {
-    display: block;
-  }
-
-  .hero-graph.graph-3d-active .graph-svg {
-    display: none;
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   .graph-3d :global(.graph-3d-canvas) {
@@ -262,59 +275,16 @@ const nodes = capabilityNodes.map((node, i) => {
     height: 100%;
   }
 
-  .graph-3d-root {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 92px;
-    height: 92px;
-    border-radius: 50%;
-    border: 2px solid var(--accent);
-    overflow: hidden;
-    z-index: 2;
+  .graph-svg-enhanced {
+    transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .graph-3d-root img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .hero-graph.graph-3d-active .graph-svg-enhanced {
+    opacity: 0;
   }
 
-  .graph-3d-root-label {
-    position: absolute;
-    left: 50%;
-    top: calc(50% + 58px);
-    transform: translate(-50%, 0);
-    font-size: 12px;
-    color: var(--text-dim);
-    z-index: 2;
-    white-space: nowrap;
-  }
-
-  .graph-3d :global(.graph-3d-label) {
-    position: absolute;
-    left: 0;
-    top: 0;
-    white-space: nowrap;
-    font-size: 13px;
-    color: var(--text);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  .graph-3d :global(.graph-3d-label-title) {
-    font-weight: 500;
-  }
-
-  .graph-3d :global(.graph-3d-label-detail) {
-    font-size: 10.5px;
-    color: var(--text-faint);
+  .hero-graph.graph-3d-active .node-halo {
+    animation: none;
   }
 
   .edge {
@@ -387,6 +357,9 @@ const nodes = capabilityNodes.map((node, i) => {
     .node-halo {
       animation: none;
       opacity: 0;
+    }
+    .graph-3d {
+      display: none;
     }
   }
 
