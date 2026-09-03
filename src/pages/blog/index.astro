@@ -1,0 +1,207 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getPosts } from '../../lib/keystatic-content';
+
+const posts = await getPosts();
+
+function formatDate(iso: string) {
+  const [year, month, day] = iso.split('-').map(Number);
+  const date = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1));
+  return date.toLocaleDateString('es-HN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
+---
+
+<Base
+  title="Blog — Gabriel Barrientos"
+  description="Notas sobre infraestructura confiable, observabilidad y automatización en entornos regulados."
+>
+  <Nav />
+  <main>
+    <header class="blog-hero">
+      <div class="wrap">
+        <h1 class="blog-title">Blog</h1>
+        <p class="blog-sub">Notas de campo sobre confiabilidad, automatización y observabilidad.</p>
+      </div>
+    </header>
+
+    <section id="posts">
+      <div class="wrap">
+        {posts.length === 0 ? (
+          <div class="empty-state reveal">
+            <svg viewBox="0 0 120 60" class="empty-graph" aria-hidden="true">
+              <line x1="20" y1="30" x2="60" y2="30" class="empty-edge" />
+              <line x1="60" y1="30" x2="100" y2="30" class="empty-edge" />
+              <circle cx="20" cy="30" r="6" class="empty-node" />
+              <circle cx="60" cy="30" r="6" class="empty-node" />
+              <circle cx="100" cy="30" r="6" class="empty-node" />
+            </svg>
+            <p class="empty-label mono">sin publicaciones aún</p>
+            <p class="empty-note">Este nodo todavía no emite. Vuelve pronto.</p>
+          </div>
+        ) : (
+          <div class="post-grid">
+            {posts.map((post) => (
+              <a class="card post-card reveal" href={`/blog/${post.slug}`}>
+                <div class="post-mount" aria-hidden="true">
+                  <span class="post-node"></span>
+                  <span class="post-stem"></span>
+                </div>
+                {post.cover && (
+                  <img class="post-cover" src={post.cover} alt="" loading="lazy" />
+                )}
+                <p class="post-date mono">{formatDate(post.date)}</p>
+                <h2 class="post-title">{post.title}</h2>
+                <p class="post-excerpt">{post.excerpt}</p>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .blog-hero {
+    padding: 160px 0 48px;
+  }
+
+  .blog-title {
+    font-size: clamp(2.2rem, 1.7rem + 2.6vw, 3.4rem);
+    line-height: 1.05;
+    margin: 0 0 14px;
+  }
+
+  .blog-sub {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  #posts {
+    padding-top: 0;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .post-card:hover {
+    border-color: var(--line-strong);
+  }
+
+  .post-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20px;
+    margin-bottom: 2px;
+  }
+
+  .post-node {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1.5px solid var(--accent);
+    flex-shrink: 0;
+  }
+
+  .post-stem {
+    width: 1px;
+    flex: 1;
+    background: var(--line-strong);
+    margin-top: 3px;
+  }
+
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+
+  .post-date {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  .post-title {
+    font-size: 1.05rem;
+    margin: 2px 0 0;
+  }
+
+  .post-excerpt {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin: 4px 0 0;
+    flex: 1;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 64px 24px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg-elevated);
+  }
+
+  .empty-graph {
+    width: 160px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .empty-edge {
+    stroke: var(--line-strong);
+    stroke-width: 1.2;
+    stroke-dasharray: 4 4;
+  }
+
+  .empty-node {
+    fill: var(--bg-elevated);
+    stroke: var(--line-strong);
+    stroke-width: 1.5;
+  }
+
+  .empty-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+    margin: 0;
+  }
+
+  .empty-note {
+    font-size: 13.5px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .blog-hero {
+      padding-top: 120px;
+    }
+  }
+</style>
