@@ -207,13 +207,17 @@ export function initHeroGraph3D(
       rig.edgeGeometry.setDrawRange(0, Math.round(eased * rig.edgeSegments));
 
       // Depth-based tonal opacity instead of glow: farther nodes read dimmer.
+      // Text stays legible regardless of depth — only the graphic elements
+      // (dots/edges) get the full dim range; a 0.35 floor on actual label
+      // text made distant nodes nearly unreadable on desktop.
       const worldPos = rig.position.clone().applyMatrix4(group.matrixWorld);
       const viewPos = worldPos.clone().applyMatrix4(camera.matrixWorldInverse);
       const depth01 = MathUtils.clamp((viewPos.z + WORLD_R) / (WORLD_R * 2), 0, 1);
       const opacity = MathUtils.lerp(0.35, 0.9, depth01);
+      const labelOpacity = MathUtils.lerp(0.8, 1, depth01);
       rig.edgeMaterial.opacity = opacity * 0.6;
       rig.dotMaterial.opacity = opacity;
-      rig.labelEl.style.opacity = String(opacity);
+      rig.labelEl.style.opacity = String(labelOpacity);
 
       // Project to screen space for the DOM label.
       const ndc = worldPos.clone().project(camera);

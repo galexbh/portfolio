@@ -127,11 +127,15 @@ const nodes = capabilityNodes.map((node, i) => {
     // Imperative, unconditional show/hide — not just a CSS class toggle — so
     // there is no timing window in which both the SVG fallback and the 3D
     // scene can be visible at once, regardless of how/when this fires.
+    // display:none (not a fading opacity) so the swap is instantaneous: the
+    // 3D scene already has a real painted frame by the time this runs (two
+    // rAFs after init), so there's nothing to crossfade — a fade here only
+    // ever bought a ~400ms window where both layers sat on top of each other
+    // at full opacity, which is what actually looked like a rendering bug.
     const setActive = (next: boolean) => {
       active = next;
       heroGraph.classList.toggle('graph-3d-active', next);
-      svg.style.opacity = next ? '0' : '';
-      svg.style.pointerEvents = next ? 'none' : '';
+      svg.style.display = next ? 'none' : '';
     };
 
     const run = async () => {
@@ -230,7 +234,6 @@ const nodes = capabilityNodes.map((node, i) => {
     width: 100%;
     height: auto;
     overflow: visible;
-    transition: opacity 0.4s ease;
   }
 
   .graph-3d {
@@ -249,8 +252,7 @@ const nodes = capabilityNodes.map((node, i) => {
   }
 
   .hero-graph.graph-3d-active .graph-svg {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
   }
 
   .graph-3d :global(.graph-3d-canvas) {
