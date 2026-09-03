@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" role="img" aria-label="Infrastructure automation">
+  <g stroke="#5eead4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="19" cy="18" r="5"/><circle cx="45" cy="32" r="7"/><circle cx="19" cy="47" r="5" fill="#5eead4"/>
+    <path d="M24 18H32V28H38M38 36H32V47H24"/>
+    <path d="M42 29L48 32L42 35"/>
+  </g>
+</svg>

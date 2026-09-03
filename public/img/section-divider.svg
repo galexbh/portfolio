@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="60" viewBox="0 0 1600 60" fill="none" role="img" aria-label="Divisor de topología de red">
+  <path d="M0 30H1600" stroke="white" stroke-opacity=".12"/>
+  <circle cx="318" cy="30" r="5" fill="#090c0f" stroke="#5eead4" stroke-width="1.5"/>
+  <circle cx="842" cy="30" r="4" fill="#5eead4"/>
+  <circle cx="1286" cy="30" r="5" fill="#090c0f" stroke="#5eead4" stroke-width="1.5"/>
+</svg>
