@@ -1,5 +1,13 @@
 ---
 import { skills } from '../data/content';
+
+const categoryIcons: Record<string, string> = {
+  Cloud: '/img/icon-cloud.svg',
+  'CI/CD & Automatización': '/img/icon-cicd.svg',
+  Observabilidad: '/img/icon-observability.svg',
+  Contenedores: '/img/icon-containers.svg',
+  'Seguridad y Redes': '/img/icon-security.svg',
+};
 ---
 
 <section id="skills">
@@ -12,7 +20,11 @@ import { skills } from '../data/content';
       {skills.map((group) => (
         <div class="cluster card reveal">
           <div class="cluster-head">
-            <span class="cluster-node" aria-hidden="true"></span>
+            {categoryIcons[group.category] ? (
+              <img class="cluster-icon" src={categoryIcons[group.category]} alt="" width="20" height="20" aria-hidden="true" />
+            ) : (
+              <span class="cluster-node" aria-hidden="true"></span>
+            )}
             <p class="cluster-label mono">{group.category}</p>
           </div>
           <ul class="cluster-items">
@@ -59,6 +71,10 @@ import { skills } from '../data/content';
     inset: -5px;
     border-radius: 50%;
     border: 1px solid var(--accent-dim);
+  }
+
+  .cluster-icon {
+    flex-shrink: 0;
   }
 
   .cluster-label {

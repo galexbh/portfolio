@@ -114,11 +114,17 @@ a {
 section {
   position: relative;
   padding: 96px 0;
-  border-bottom: var(--edge) solid var(--line);
 }
 
-section:last-of-type {
-  border-bottom: none;
+section:not(:last-of-type)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60px;
+  background: url('/img/section-divider.svg') center / contain no-repeat;
+  pointer-events: none;
 }
 
 h1, h2, h3 {
