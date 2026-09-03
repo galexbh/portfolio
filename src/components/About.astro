@@ -1,5 +1,7 @@
 ---
-import { about } from '../data/content';
+import { getAbout } from '../lib/keystatic-content';
+
+const about = await getAbout();
 ---
 
 <section id="about">

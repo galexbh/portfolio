@@ -1,5 +1,7 @@
 ---
-import { contact } from '../data/content';
+import { getContact } from '../lib/keystatic-content';
+
+const contact = await getContact();
 ---
 
 <section id="contact">

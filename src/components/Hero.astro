@@ -1,5 +1,7 @@
 ---
-import { hero, capabilityNodes, meta } from '../data/content';
+import { getHero, getCapabilityNodes, getMeta } from '../lib/keystatic-content';
+
+const [hero, capabilityNodes, meta] = await Promise.all([getHero(), getCapabilityNodes(), getMeta()]);
 
 const root = { x: 110, y: 300 };
 const radius = 250;

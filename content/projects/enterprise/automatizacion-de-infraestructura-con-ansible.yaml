@@ -1,3 +1,4 @@
+order: 0
 name: Automatización de infraestructura con Ansible
 category: Automatización
 role: SRE actual

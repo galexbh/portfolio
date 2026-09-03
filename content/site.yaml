@@ -7,8 +7,36 @@ github: https://github.com/galexbh
 heroHeadline: Site Reliability Engineer
 heroSubheadline: Construyo infraestructura confiable, automatizada y observable en entornos regulados y multi-nube.
 aboutIntro: Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y gestión de incidentes bajo ITIL, en entornos bancarios regulados. Actualmente trabajo como Site Reliability Engineer, dentro del equipo de plataformas.
+aboutLeadIn: 'En el rol de SRE cubro cinco vertientes principales:'
+vertientes:
+  - label: Cloud
+    detail: operación y soporte de cargas de trabajo en AWS y Azure.
+  - label: CI/CD
+    detail: diseño y mantenimiento de pipelines en Azure DevOps, y despliegues continuos con Argo CD.
+  - label: Observabilidad
+    detail: monitoreo, dashboards y alertas con Dynatrace.
+  - label: Contenedores
+    detail: administración de clústeres OpenShift.
+  - label: Automatización
+    detail: playbooks de Ansible para configuración e infraestructura.
 aboutClosing: Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones bancarias, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
 regulatedBadge: Experiencia en entornos regulados
+capabilityNodes:
+  - id: cloud
+    label: Cloud
+    detail: AWS · Azure
+  - id: cicd
+    label: CI/CD
+    detail: Azure DevOps · Argo CD
+  - id: observability
+    label: Observabilidad
+    detail: Dynatrace
+  - id: containers
+    label: Contenedores
+    detail: OpenShift
+  - id: automation
+    label: Automatización
+    detail: Ansible
 educationDegree: Ingeniero en Sistemas
 educationInstitution: Universidad Nacional Autónoma de Honduras (UNAH)
 educationPeriod: Feb 2018 – Sept 2024

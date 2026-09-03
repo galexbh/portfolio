@@ -1,5 +1,6 @@
 ---
-import { meta } from '../data/content';
+import { getMeta } from '../lib/keystatic-content';
+const meta = await getMeta();
 const year = new Date().getFullYear();
 ---
 

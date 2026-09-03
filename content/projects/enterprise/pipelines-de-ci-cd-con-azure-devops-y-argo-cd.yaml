@@ -1,3 +1,4 @@
+order: 1
 name: Pipelines de CI/CD con Azure DevOps y Argo CD
 category: CI/CD
 role: SRE actual

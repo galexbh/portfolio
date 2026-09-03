@@ -1,5 +1,7 @@
 ---
-import { skills } from '../data/content';
+import { getSkills } from '../lib/keystatic-content';
+
+const skills = await getSkills();
 
 const categoryIcons: Record<string, string> = {
   Cloud: '/img/icon-cloud.svg',

@@ -1,5 +1,7 @@
 ---
-import { certifications } from '../data/content';
+import { getCertifications } from '../lib/keystatic-content';
+
+const certifications = await getCertifications();
 ---
 
 <section id="certifications">

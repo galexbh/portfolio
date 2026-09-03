@@ -1,5 +1,7 @@
 ---
-import { experience } from '../data/content';
+import { getExperience } from '../lib/keystatic-content';
+
+const experience = await getExperience();
 ---
 
 <section id="experience">

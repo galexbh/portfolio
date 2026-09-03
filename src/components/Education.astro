@@ -1,5 +1,7 @@
 ---
-import { education } from '../data/content';
+import { getEducation } from '../lib/keystatic-content';
+
+const education = await getEducation();
 ---
 
 <section id="education">

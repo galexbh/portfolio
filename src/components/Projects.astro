@@ -1,5 +1,7 @@
 ---
-import { enterpriseProjects, ossProjects } from '../data/content';
+import { getEnterpriseProjects, getOssProjects } from '../lib/keystatic-content';
+
+const [enterpriseProjects, ossProjects] = await Promise.all([getEnterpriseProjects(), getOssProjects()]);
 ---
 
 <section id="projects">
