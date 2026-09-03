@@ -6,8 +6,7 @@ location: Tegucigalpa, HN
 current: false
 bullets:
   - 'Administración de entornos híbridos multi-nube: Contabo, AWS, Azure.'
-  - Acceso remoto Zero Trust con Cloudflare Tunnels, sin VPN tradicional.
+  - Acceso remoto Zero Trust con Cloudflare Tunnels.
   - Monitoreo automatizado con alertas en tiempo real vía Telegram.
   - Liderazgo de un equipo de 3 practicantes universitarios.
-metrics:
-  - '-35% en tiempo de respuesta a incidentes'
+metrics: []
