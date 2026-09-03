@@ -6,9 +6,20 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "keystatic": "cross-env KEYSTATIC_ADMIN=1 astro dev"
   },
   "dependencies": {
-    "astro": "^4.16.0"
+    "@astrojs/react": "^6.0.5",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
+    "astro": "^7.2.10",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "wrangler": "^4.128.0"
   }
 }

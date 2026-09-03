@@ -4,3 +4,10 @@ dist/
 .DS_Store
 *.log
 .impeccable/config.local.json
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
