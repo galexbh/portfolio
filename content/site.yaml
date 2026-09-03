@@ -4,22 +4,34 @@ location: Tegucigalpa, Honduras
 email: info@galexbh.dev
 domain: galexbh.dev
 github: https://github.com/galexbh
+linkedin: https://www.linkedin.com/in/galexbh
+instagram: https://www.instagram.com/galexbh
+youtube: https://www.youtube.com/@galexbh
 heroHeadline: Site Reliability Engineer
 heroSubheadline: Construyo infraestructura confiable, automatizada y observable.
-aboutIntro: Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y manejo de prácticas ITIL. Actualmente trabajo como Site Reliability Engineer, dentro del equipo de plataformas.
+aboutIntro: >-
+  Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura,
+  automatización y manejo de prácticas ITIL. Actualmente trabajo como Site
+  Reliability Engineer, dentro del equipo de plataformas.
 aboutLeadIn: 'En el rol de SRE cubro cinco vertientes principales:'
 vertientes:
   - label: Cloud
     detail: operación y soporte de cargas de trabajo en AWS y Azure.
   - label: CI/CD
-    detail: diseño y mantenimiento de pipelines en Azure DevOps, y despliegues continuos con Argo CD.
+    detail: >-
+      diseño y mantenimiento de pipelines en Azure DevOps, y despliegues
+      continuos con Argo CD.
   - label: Observabilidad
     detail: monitoreo, dashboards y alertas con Dynatrace.
   - label: Contenedores
     detail: administración de clústeres OpenShift.
   - label: Automatización
     detail: playbooks de Ansible para configuración e infraestructura.
-aboutClosing: Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones críticas, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
+aboutClosing: >-
+  Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL)
+  y administración de aplicaciones críticas, sistemas Linux/Windows, y seguridad
+  perimetral — combinando confiabilidad medible, observabilidad end-to-end y
+  automatización as-code.
 regulatedBadge: Experiencia en entornos críticos
 capabilityNodes:
   - id: cloud
