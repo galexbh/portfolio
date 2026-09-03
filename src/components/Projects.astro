@@ -1,0 +1,195 @@
+---
+import { enterpriseProjects, ossProjects } from '../data/content';
+---
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Proyectos</h2>
+    </div>
+
+    <div class="projects-block reveal">
+      <div class="block-head">
+        <p class="block-label mono">
+          <span class="status-dot warn" aria-hidden="true"></span>
+          Empresariales
+        </p>
+        <p class="block-note">Código no público por confidencialidad bancaria — presentados como referencia.</p>
+      </div>
+      <div class="project-grid">
+        {enterpriseProjects.map((p) => (
+          <article class="card project-card">
+            <div class="project-mount" aria-hidden="true">
+              <span class="project-node node-warn"></span>
+              <span class="project-stem"></span>
+            </div>
+            <div class="project-top">
+              <span class="chip badge-enterprise mono">Empresarial</span>
+              <span class="project-category mono">{p.category}</span>
+            </div>
+            <h3>{p.name}</h3>
+            <p class="project-role mono">{p.role}</p>
+            <p class="project-stack">{p.stack}</p>
+            <p class="project-result">{p.result}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div class="projects-block reveal">
+      <div class="block-head">
+        <p class="block-label mono">
+          <span class="status-dot" aria-hidden="true"></span>
+          Personales / Open Source
+        </p>
+        <p class="block-note">Código disponible en GitHub — @galexbh.</p>
+      </div>
+      <div class="project-grid">
+        {ossProjects.map((p) => (
+          <article class="card project-card">
+            <div class="project-mount" aria-hidden="true">
+              <span class="project-node node-healthy"></span>
+              <span class="project-stem"></span>
+            </div>
+            <div class="project-top">
+              <span class="chip badge-oss mono">{p.language ?? 'OSS'}</span>
+              <span class="project-category mono">{p.category}</span>
+            </div>
+            <h3>{p.name}</h3>
+            <p class="project-result">{p.description}</p>
+            <a class="btn btn-ghost project-link" href={p.repo} target="_blank" rel="noopener noreferrer">
+              Ver código →
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-block {
+    margin-bottom: 56px;
+  }
+
+  .projects-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .block-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .block-note {
+    font-size: 12.5px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .project-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20px;
+    margin-bottom: 2px;
+  }
+
+  .project-node {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1.5px solid var(--accent);
+    flex-shrink: 0;
+  }
+
+  .project-node.node-warn {
+    border-color: var(--warn);
+  }
+
+  .project-stem {
+    width: 1px;
+    flex: 1;
+    background: var(--line-strong);
+    margin-top: 3px;
+  }
+
+  .project-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .badge-enterprise {
+    color: var(--warn);
+    border-color: rgba(245, 185, 66, 0.35);
+  }
+
+  .badge-oss {
+    color: var(--accent);
+    border-color: rgba(94, 234, 212, 0.35);
+  }
+
+  .project-category {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .project-card h3 {
+    font-size: 1.02rem;
+    margin: 4px 0 0;
+  }
+
+  .project-role {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  .project-stack {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .project-result {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin: 0;
+    flex: 1;
+  }
+
+  .project-link {
+    align-self: flex-start;
+    margin-top: 8px;
+    padding: 8px 16px;
+  }
+</style>

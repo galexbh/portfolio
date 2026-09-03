@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-03T00:00:00Z",
+  "title": "Design System: Gabriel Barrientos — Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "canvas": { "role": "neutral", "displayName": "Canvas Black", "canonical": "#090c0f", "tonalRamp": ["#050608", "#090c0f", "#0d1114", "#0f1418", "#141b20", "#1c242a", "#2a353d", "#3d4a52"] },
+      "surface-elevated": { "role": "neutral", "displayName": "Elevated Panel", "canonical": "#0f1418", "tonalRamp": ["#08090b", "#0c1013", "#0f1418", "#141b20", "#1b242a", "#293439", "#3d4a52", "#576570"] },
+      "surface-elevated-2": { "role": "neutral", "displayName": "Elevated Panel 2", "canonical": "#141b20", "tonalRamp": ["#0a0d10", "#0f1418", "#141b20", "#1b232a", "#252f37", "#354350", "#4c5c69", "#6a7c8a"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(230, 237, 240, 0.10)", "tonalRamp": ["rgba(230,237,240,0.04)", "rgba(230,237,240,0.06)", "rgba(230,237,240,0.08)", "rgba(230,237,240,0.10)", "rgba(230,237,240,0.14)", "rgba(230,237,240,0.20)", "rgba(230,237,240,0.30)", "rgba(230,237,240,0.45)"] },
+      "line-strong": { "role": "neutral", "displayName": "Hairline Strong", "canonical": "rgba(230, 237, 240, 0.18)", "tonalRamp": ["rgba(230,237,240,0.08)", "rgba(230,237,240,0.12)", "rgba(230,237,240,0.15)", "rgba(230,237,240,0.18)", "rgba(230,237,240,0.24)", "rgba(230,237,240,0.32)", "rgba(230,237,240,0.42)", "rgba(230,237,240,0.55)"] },
+      "text": { "role": "neutral", "displayName": "Signal Text", "canonical": "#e6edf0", "tonalRamp": ["#7c8a90", "#95a2a8", "#aebac0", "#c7d1d5", "#d6dfe2", "#e6edf0", "#eff4f6", "#f7fafb"] },
+      "text-dim": { "role": "neutral", "displayName": "Dim Text", "canonical": "#8b98a1", "tonalRamp": ["#454e54", "#5a656b", "#707c82", "#8b98a1", "#a1acb3", "#b8c1c6", "#ced5d9", "#e4e8ea"] },
+      "text-faint": { "role": "neutral", "displayName": "Faint Text", "canonical": "#737d85", "tonalRamp": ["#3a4045", "#4c5359", "#5f676d", "#737d85", "#8a929a", "#a2a9b0", "#bbc1c6", "#d5d9dc"] },
+      "accent-mint": { "role": "primary", "displayName": "Signal Mint", "canonical": "#5eead4", "tonalRamp": ["#0c3e37", "#146b5c", "#1c9880", "#2fc4a6", "#5eead4", "#8bf1e0", "#b7f7ec", "#e0fbf6"] },
+      "accent-mint-dim": { "role": "primary", "displayName": "Signal Mint Dim", "canonical": "rgba(94, 234, 212, 0.14)", "tonalRamp": ["rgba(94,234,212,0.04)", "rgba(94,234,212,0.08)", "rgba(94,234,212,0.11)", "rgba(94,234,212,0.14)", "rgba(94,234,212,0.18)", "rgba(94,234,212,0.24)", "rgba(94,234,212,0.32)", "rgba(94,234,212,0.42)"] },
+      "status-amber": { "role": "secondary", "displayName": "Restricted Amber", "canonical": "#f5b942", "tonalRamp": ["#573c07", "#7d570c", "#a4740f", "#c99417", "#f5b942", "#f8ca6c", "#fbdb9c", "#fdecc9"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only." },
+      "headline": { "displayName": "Headline", "purpose": "Every section's h2." },
+      "title": { "displayName": "Title", "purpose": "Card and entry h3 (project names, role titles, degree)." },
+      "body": { "displayName": "Body", "purpose": "Paragraph copy across About, Experience, Projects." },
+      "label": { "displayName": "Label / Mono", "purpose": "Status text, timestamps, categories, nav links, chips, metrics." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "reveal-on-scroll", "value": "opacity 0.6s ease, transform 0.6s ease (translateY 14px -> 0)", "purpose": "IntersectionObserver-driven section entrance; disabled under prefers-reduced-motion." },
+      { "name": "edge-draw", "value": "stroke-dashoffset 200 -> 0 over 1.6s ease, staggered 0.15s per edge", "purpose": "Hero graph edges animate in on load to read as a topology assembling itself." },
+      { "name": "node-pulse", "value": "3s ease-in-out infinite, halo radius 15px -> 24px, opacity 0.5 -> 0", "purpose": "Ambient life on hero capability nodes; disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "nav-collapse", "value": "640px" },
+      { "name": "about-cert-stack", "value": "600px" },
+      { "name": "section-padding-tight", "value": "720px" },
+      { "name": "contact-stack", "value": "800px" },
+      { "name": "hero-stack", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main CTA (e.g. hero 'Ver proyectos'); mint-dim fill with mint text and border.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Ver proyectos</a>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.02em; text-decoration: none; border: 1px solid; transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; } .ds-btn-primary { background: rgba(94, 234, 212, 0.14); border-color: #5eead4; color: #5eead4; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: rgba(94, 234, 212, 0.22); transform: translateY(-1px); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary CTA / 'view code' link.",
+      "html": "<a class=\"ds-btn ds-btn-ghost\" href=\"#\">Ver código →</a>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.02em; text-decoration: none; border: 1px solid rgba(230,237,240,0.18); transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; } .ds-btn-ghost { color: #8b98a1; background: transparent; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { color: #e6edf0; border-color: rgba(230,237,240,0.18); background: #0f1418; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat elevated container used for skill clusters, project cards, education.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card-title\">Cloud</p><p class=\"ds-card-body\">AWS · Azure · OpenShift</p></div>",
+      "css": ".ds-card { background: #0f1418; border: 1px solid rgba(230,237,240,0.10); border-radius: 6px; padding: 28px; } .ds-card-title { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 1.02rem; color: #e6edf0; margin: 0 0 8px; } .ds-card-body { font-family: 'Overpass', sans-serif; font-size: 13.5px; color: #8b98a1; margin: 0; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pill label used for categories and project badges (enterprise = amber, OSS = mint).",
+      "html": "<span class=\"ds-chip ds-chip-oss\">TypeScript</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid rgba(230,237,240,0.18); border-radius: 999px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #8b98a1; background: #0f1418; } .ds-chip-oss { color: #5eead4; border-color: rgba(94,234,212,0.35); } .ds-chip-enterprise { color: #f5b942; border-color: rgba(245,185,66,0.35); }"
+    },
+    {
+      "name": "Status Dot (Node)",
+      "kind": "custom",
+      "refersTo": "status-dot",
+      "description": "The signature node marker: healthy (mint, glowing), restricted (amber, glowing), resolved/past (hollow, no glow). Reused in nav, hero meta, badges, timeline, certifications.",
+      "html": "<span class=\"ds-dot ds-dot-healthy\"></span> <span class=\"ds-dot ds-dot-warn\"></span> <span class=\"ds-dot ds-dot-resolved\"></span>",
+      "css": ".ds-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #5eead4; box-shadow: 0 0 0 3px rgba(94,234,212,0.14); } .ds-dot-warn { background: #f5b942; box-shadow: 0 0 0 3px rgba(245,185,66,0.16); } .ds-dot-resolved { background: #0f1418; border: 1px solid rgba(230,237,240,0.18); box-shadow: none; }"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Fixed top bar with brand (status dot + mono handle) and mono nav links that hover into mint.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-brand\"><span class=\"ds-dot ds-dot-healthy\"></span>galexbh</a><ul class=\"ds-nav-links\"><li><a href=\"#about\">about</a></li><li><a href=\"#contact\">contact</a></li></ul></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 24px; background: rgba(9,12,15,0.72); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(230,237,240,0.10); } .ds-nav-brand { display: inline-flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e6edf0; text-decoration: none; } .ds-nav-links { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; } .ds-nav-links a { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #8b98a1; text-decoration: none; transition: color 0.2s ease; } .ds-nav-links a:hover, .ds-nav-links a:focus-visible { color: #5eead4; } .ds-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #5eead4; box-shadow: 0 0 0 3px rgba(94,234,212,0.14); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Live Topology",
+    "overview": "The site reads as a service-dependency map that happens to describe a career, not a résumé wearing a dark theme. Every recurring shape — the hollow-circle node, the thin dashed or solid edge, the mono status label — is drawn from network-topology and observability tooling (Grafana/Dynatrace-adjacent, not sci-fi HUD). The world rejects the generic neon-glassmorphism SRE-dashboard default: no glass blur panels, no gradient glows, no multi-color status soup. Density is calm and technical — one accent color carries almost all the emphasis in the entire system, and its restraint is what reads as \"production-grade\" rather than \"template.\"\n\nThe canvas is near-black rather than pure black, giving the line-art edges (1px, low-opacity white) somewhere to sit without vibrating. Content is organized as flat, bordered sections on a single scrolling column, each one a \"panel\" in the topology rather than a card wall. Motion is limited to edges drawing themselves in and content revealing on scroll — never decorative, always legible as \"the graph is alive.\"",
+    "keyCharacteristics": [
+      "Near-black canvas with 1px hairline borders standing in for depth (no shadows)",
+      "One electric mint accent for \"healthy/active\"; amber is reserved exclusively for a named restricted/enterprise status, never for a \"past\" or default state",
+      "Every node in the system (hero graph, skill clusters, timeline markers, project mounts) is the same hollow-circle-with-ring motif",
+      "Monospace for every technical/status label; a grounded geometric sans for everything read as prose"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Mint is the only color permitted to mean \"active, healthy, or emphasized.\" It is never used decoratively; every instance of mint on the page is load-bearing status information (a hover, a current role, a healthy node, a primary action).", "section": "colors" },
+      { "name": "The Amber Exception Rule", "body": "Amber means exactly one thing — \"restricted/enterprise\" — and appears in exactly two places: the enterprise project badge and its matching node-mount dot. It must never be reused for \"past,\" \"warning,\" \"error,\" or any other state; those meanings stay unassigned rather than borrowing amber.", "section": "colors" },
+      { "name": "The Mono-Is-Data Rule", "body": "Monospace is used exactly where a real system would show you a status code, timestamp, handle, or label — never for headlines and never for body prose. If a string reads as \"data about the page\" rather than \"the page's content,\" it's mono.", "section": "typography" },
+      { "name": "The No-Shadow Rule", "body": "Nothing casts a drop shadow. Elevation is expressed only as a lighter background tone plus a 1px border; if a component needs to read as \"above\" something else, lighten it and border it — do not shadow it.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do treat mint as the only \"on/healthy/hover\" signal in the system (The One Signal Rule) — new interactive elements hover into mint, not into a new color.",
+      "Do build any new node-like marker (a status indicator, a timeline point, a graph vertex) from the existing hollow-circle-plus-optional-halo motif rather than introducing a new icon or glyph shape.",
+      "Do keep monospace scoped to data/status/label text and Overpass to prose and headings (The Mono-Is-Data Rule).",
+      "Do express new depth relationships with a tonal step (canvas → elevated → elevated-2) plus a 1px hairline border, never a shadow.",
+      "Do stick to the two radii (4px controls, 6px containers, 999px pills) — don't introduce a third rounding value."
+    ],
+    "donts": [
+      "Don't introduce a second accent color for \"active/healthy\" states — amber is reserved solely for the restricted/enterprise status and must never mean \"past,\" \"warning,\" or \"error\" (The Amber Exception Rule; an earlier build did use amber for past roles and that was a confirmed, fixed defect, not a pattern to repeat).",
+      "Don't add drop shadows, glassmorphism panels, or gradient glows anywhere — the direction contract explicitly rejects the \"neon-glassmorphism SRE-dashboard\" default this system could easily slide into.",
+      "Don't use backdrop blur outside the fixed nav bar; it is a one-off treatment for the sticky header, not a general surface treatment.",
+      "Don't decorate edges/connectors with straight decorative gradients — edges are always thin, single-color hairline or dashed strokes, never a gradient stroke."
+    ]
+  }
+}

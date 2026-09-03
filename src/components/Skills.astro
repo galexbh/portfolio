@@ -1,0 +1,111 @@
+---
+import { skills } from '../data/content';
+---
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Skills</h2>
+    </div>
+
+    <div class="cluster-grid">
+      {skills.map((group) => (
+        <div class="cluster card reveal">
+          <div class="cluster-head">
+            <span class="cluster-node" aria-hidden="true"></span>
+            <p class="cluster-label mono">{group.category}</p>
+          </div>
+          <ul class="cluster-items">
+            {group.items.map((item) => (
+              <li>
+                <span class="item-dot" aria-hidden="true"></span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cluster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .cluster-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .cluster-node {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    background: var(--bg-elevated);
+    flex-shrink: 0;
+  }
+
+  .cluster-node::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid var(--accent-dim);
+  }
+
+  .cluster-label {
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .cluster-items {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 4px;
+    border-left: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .cluster-items li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-left: 15px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+
+  .cluster-items li::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    width: 13px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--text-faint);
+    background: var(--bg-elevated);
+    flex-shrink: 0;
+  }
+</style>

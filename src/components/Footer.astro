@@ -1,0 +1,24 @@
+---
+import { meta } from '../data/content';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner mono">
+    <span>© {year} {meta.name}</span>
+    <span>{meta.domain}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 28px 0;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+</style>

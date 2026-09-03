@@ -1,0 +1,63 @@
+---
+import { education } from '../data/content';
+---
+
+<section id="education">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Educación</h2>
+    </div>
+
+    <div class="card edu-card reveal">
+      <h3>{education.degree}</h3>
+      <p class="edu-institution mono">{education.institution}</p>
+      <p class="edu-period mono">{education.period}</p>
+      <div class="edu-talks">
+        <p class="talks-label mono">Ponencias</p>
+        <ul>
+          {education.talks.map((t) => <li>{t}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .edu-card {
+    max-width: 620px;
+  }
+
+  .edu-institution {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 6px 0 2px;
+  }
+
+  .edu-period {
+    color: var(--text-faint);
+    font-size: 12px;
+    margin: 0 0 20px;
+  }
+
+  .edu-talks {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+
+  .talks-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  .edu-talks ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text-dim);
+    font-size: 14px;
+    display: grid;
+    gap: 6px;
+  }
+</style>
