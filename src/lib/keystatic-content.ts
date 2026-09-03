@@ -73,7 +73,14 @@ export async function getContact() {
   const site = await reader.singletons.site.read();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   const handle = new URL(site.github).pathname.replace(/^\//, '');
-  return { email: site.email, github: site.github, githubHandle: `@${handle}` };
+  return {
+    email: site.email,
+    github: site.github,
+    githubHandle: `@${handle}`,
+    linkedin: site.linkedin || null,
+    instagram: site.instagram || null,
+    youtube: site.youtube || null,
+  };
 }
 
 export async function getExperience() {
@@ -132,6 +139,7 @@ export async function getPosts() {
       category: entry.category,
       excerpt: entry.excerpt,
       cover: entry.cover ? `/img/blog/${entry.cover}` : null,
+      videoUrl: entry.videoUrl || null,
       body: entry.body,
     }))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -147,6 +155,7 @@ export async function getPost(slug: string) {
     category: entry.category,
     excerpt: entry.excerpt,
     cover: entry.cover ? `/img/blog/${entry.cover}` : null,
+    videoUrl: entry.videoUrl || null,
     body: entry.body,
   };
 }
@@ -155,3 +164,19 @@ export const postCategoryLabels: Record<string, string> = {
   'sre-devops': 'SRE / DevOps',
   personal: 'Personal',
 };
+
+/** Extracts an 11-char YouTube video ID from youtu.be, watch?v=, or /embed/ URLs. */
+export function getYoutubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1) || null;
+    if (u.hostname.endsWith('youtube.com')) {
+      if (u.pathname === '/watch') return u.searchParams.get('v');
+      const embedMatch = u.pathname.match(/^\/embed\/([^/]+)/);
+      if (embedMatch) return embedMatch[1];
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}

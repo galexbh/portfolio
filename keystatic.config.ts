@@ -19,6 +19,9 @@ export default config({
         email: fields.text({ label: 'Email de contacto' }),
         domain: fields.text({ label: 'Dominio' }),
         github: fields.url({ label: 'URL de GitHub' }),
+        linkedin: fields.url({ label: 'URL de LinkedIn', validation: { isRequired: false } }),
+        instagram: fields.url({ label: 'URL de Instagram', validation: { isRequired: false } }),
+        youtube: fields.url({ label: 'URL de YouTube', validation: { isRequired: false } }),
 
         heroHeadline: fields.text({ label: 'Hero — headline' }),
         heroSubheadline: fields.text({ label: 'Hero — subheadline', multiline: true }),
@@ -154,6 +157,7 @@ export default config({
           publicPath: '/img/blog/',
           validation: { isRequired: false },
         }),
+        videoUrl: fields.url({ label: 'Video (YouTube)', validation: { isRequired: false } }),
         body: fields.document({
           label: 'Contenido',
           formatting: true,

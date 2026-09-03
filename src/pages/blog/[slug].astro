@@ -3,7 +3,7 @@ import { DocumentRenderer } from '@keystatic/core/renderer';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { getPosts, getPost, postCategoryLabels } from '../../lib/keystatic-content';
+import { getPosts, getPost, postCategoryLabels, getYoutubeId } from '../../lib/keystatic-content';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -20,6 +20,7 @@ if (!post) {
 const body = await post.body();
 const DEFAULT_COVER = '/img/blog/blog-cover-default.webp';
 const coverSrc = post.cover ?? DEFAULT_COVER;
+const videoId = post.videoUrl ? getYoutubeId(post.videoUrl) : null;
 
 function formatDate(iso: string) {
   const [year, month, day] = iso.split('-').map(Number);
@@ -45,7 +46,19 @@ function formatDate(iso: string) {
           <h1 class="post-title">{post.title}</h1>
         </header>
 
-        <img class="post-cover" src={coverSrc} alt="" />
+        {videoId ? (
+          <div class="post-video" data-video-id={videoId}>
+            <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt="" loading="lazy" />
+            <button type="button" class="post-video-play" aria-label="Reproducir video">
+              <svg viewBox="0 0 40 40" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" />
+                <path d="M16 13 L28 20 L16 27 Z" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <img class="post-cover" src={coverSrc} alt="" />
+        )}
 
         <div class="prose">
           <DocumentRenderer document={body} />
@@ -59,6 +72,7 @@ function formatDate(iso: string) {
     </article>
   </main>
   <Footer />
+  {videoId && <script src="/scripts/video-embed.js" is:inline></script>}
 </Base>
 
 <style>
@@ -122,6 +136,61 @@ function formatDate(iso: string) {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    margin: 32px 0;
+  }
+
+  .post-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    margin: 32px 0;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--bg-elevated);
+  }
+
+  .post-video img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .post-video-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .post-video-play svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .post-video-play circle {
+    fill: var(--bg);
+    fill-opacity: 0.75;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .post-video-play path {
+    fill: var(--accent);
+  }
+
+  :global(.post-video-frame) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
     border-radius: 6px;
     border: 1px solid var(--line);
     margin: 32px 0;

@@ -2,6 +2,10 @@
 import { getContact } from '../lib/keystatic-content';
 
 const contact = await getContact();
+
+function formatUrl(url: string) {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
 ---
 
 <section id="contact">
@@ -23,8 +27,8 @@ const contact = await getContact();
       <pre class="terminal-body mono"><code>$ ping {contact.githubHandle}
 node root reachable, 0% loss
 
-<a href={`mailto:${contact.email}`}>→ email  {contact.email}</a>
-<a href={contact.github} target="_blank" rel="noopener noreferrer">→ github {contact.githubHandle}</a><span class="terminal-disabled">→ cv      próximamente</span></code></pre>
+<a href={`mailto:${contact.email}`}>→ email     {contact.email}</a>
+<a href={contact.github} target="_blank" rel="noopener noreferrer">→ github    {contact.githubHandle}</a>{contact.linkedin && <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">→ linkedin  {formatUrl(contact.linkedin)}</a>}{contact.instagram && <a href={contact.instagram} target="_blank" rel="noopener noreferrer">→ instagram {formatUrl(contact.instagram)}</a>}{contact.youtube && <a href={contact.youtube} target="_blank" rel="noopener noreferrer">→ youtube   {formatUrl(contact.youtube)}</a>}<span class="terminal-disabled">→ cv        próximamente</span></code></pre>
     </div>
   </div>
 </section>
