@@ -18,6 +18,8 @@ if (!post) {
 }
 
 const body = await post.body();
+const DEFAULT_COVER = '/img/blog/blog-cover-default.webp';
+const coverSrc = post.cover ?? DEFAULT_COVER;
 
 function formatDate(iso: string) {
   const [year, month, day] = iso.split('-').map(Number);
@@ -26,7 +28,7 @@ function formatDate(iso: string) {
 }
 ---
 
-<Base title={`${post.title} — Blog — Gabriel Barrientos`} description={post.excerpt}>
+<Base title={`${post.title} — Blog — Gabriel Barrientos`} description={post.excerpt} image={coverSrc}>
   <Nav />
   <main>
     <article class="post">
@@ -43,9 +45,7 @@ function formatDate(iso: string) {
           <h1 class="post-title">{post.title}</h1>
         </header>
 
-        {post.cover && (
-          <img class="post-cover" src={post.cover} alt="" />
-        )}
+        <img class="post-cover" src={coverSrc} alt="" />
 
         <div class="prose">
           <DocumentRenderer document={body} />

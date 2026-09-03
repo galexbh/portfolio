@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import { getPosts, postCategoryLabels } from '../../lib/keystatic-content';
 
 const posts = await getPosts();
+const DEFAULT_COVER = '/img/blog/blog-cover-default.webp';
 
 const filters = [
   { value: 'all', label: 'Todo' },
@@ -21,7 +22,8 @@ function formatDate(iso: string) {
 
 <Base
   title="Blog — Gabriel Barrientos"
-  description="Notas sobre infraestructura confiable, observabilidad y automatización en entornos regulados."
+  description="Notas sobre SRE, DevOps e infraestructura — y de vez en cuando algo personal."
+  image={DEFAULT_COVER}
 >
   <Nav />
   <main>
@@ -30,6 +32,7 @@ function formatDate(iso: string) {
         <h1 class="blog-title">Blog</h1>
         <p class="blog-sub">Notas sobre SRE, DevOps e infraestructura — y de vez en cuando algo personal.</p>
       </div>
+      <img class="blog-banner" src="/img/blog/blog-index-banner.webp" alt="" aria-hidden="true" loading="eager" />
     </header>
 
     <section id="posts">
@@ -62,9 +65,7 @@ function formatDate(iso: string) {
                     <span class:list={['post-node', { 'post-node-personal': post.category === 'personal' }]}></span>
                     <span class="post-stem"></span>
                   </div>
-                  {post.cover && (
-                    <img class="post-cover" src={post.cover} alt="" loading="lazy" />
-                  )}
+                  <img class="post-cover" src={post.cover ?? DEFAULT_COVER} alt="" loading="lazy" />
                   <div class="post-meta">
                     <span class:list={['chip', 'post-chip', { 'post-chip-personal': post.category === 'personal' }]}>
                       {postCategoryLabels[post.category] ?? post.category}
@@ -102,6 +103,23 @@ function formatDate(iso: string) {
     color: var(--text-dim);
     max-width: 46ch;
     margin: 0;
+  }
+
+  .blog-banner {
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+    object-position: center;
+    margin-top: 40px;
+    opacity: 0.85;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (max-width: 720px) {
+    .blog-banner {
+      max-height: 100px;
+    }
   }
 
   #posts {
