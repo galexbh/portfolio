@@ -32,7 +32,12 @@ interface NodeRig {
 
 const MINT = 0x5eead4;
 const BG = 0x090c0f;
-const WORLD_R = 1.55;
+// Node distance from root. Checked against the camera/FOV/aspect below: at
+// CAMERA_Z=8, CAMERA_FOV=42 and the container's 460/600 aspect, the closest
+// node to the camera (angle 0, depth +0.45) stays within the frustum up to
+// WORLD_R ≈ 2.18 (including the ±9° sway); 1.9 keeps a comfortable margin
+// while spacing the fan out closer to the flat SVG's original spread.
+const WORLD_R = 1.9;
 const NODE_RADIUS = 0.1;
 const EDGE_SEGMENTS = 32;
 const DRAW_DURATION = 1.6; // seconds, matches the SVG's edge draw-in
