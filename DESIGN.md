@@ -91,6 +91,8 @@ The site reads as a service-dependency map that happens to describe a career, no
 
 The canvas is near-black rather than pure black, giving the line-art edges (1px, low-opacity white) somewhere to sit without vibrating. Content is organized as flat, bordered sections on a single scrolling column, each one a "panel" in the topology rather than a card wall. Motion is limited to edges drawing themselves in and content revealing on scroll — never decorative, always legible as "the graph is alive."
 
+The hero graph has a WebGL rendition (`src/scripts/hero-graph-3d.ts`, Three.js) as a progressive enhancement on top of the flat SVG version — same nodes, same edges, same mint-only palette, no lights, no bloom, no gradient glow (the SVG stays the permanent fallback for JS-disabled, no-WebGL2, `prefers-reduced-motion`, narrow viewports, and any runtime failure, so there is never a code path that renders nothing). The one thing the 3D version does that the flat graph cannot: the five capability nodes sit at genuinely different depths and slowly rotate with a damped pointer-parallax tilt, so nodes pass behind the root and dim by real distance (tonal opacity, not glow) rather than by a flat z-index trick. This is still "the graph is alive," just literalized — depth is drawn, not decorated.
+
 **Key Characteristics:**
 - Near-black canvas with 1px hairline borders standing in for depth (no shadows)
 - One electric mint accent for "healthy/active"; amber is reserved exclusively for a named restricted/enterprise status, never for a "past" or default state
