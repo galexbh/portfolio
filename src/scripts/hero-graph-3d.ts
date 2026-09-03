@@ -86,6 +86,7 @@ export function initHeroGraph3D(
     canvas.className = 'graph-3d-canvas';
     mount.appendChild(canvas);
     renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
+    renderer.setClearColor(0x000000, 0);
   } catch {
     onFail();
     return null;
@@ -156,9 +157,25 @@ export function initHeroGraph3D(
     } satisfies NodeRig;
   });
 
+  // The mount is still `display:none` (behind the still-visible SVG) at the
+  // moment this scene initializes, so this first resize() call is a no-op —
+  // clientWidth/clientHeight both read 0. That left the canvas's actual
+  // drawing-buffer stuck at its browser default (300x150), CSS-stretched to
+  // fill the real container, until the ResizeObserver's async callback got
+  // around to correcting it — a real, visible gap (an opaque-looking,
+  // upscaled blank canvas) if that callback lagged even one frame behind the
+  // display:none -> block swap, which is exactly what showed up on a slow
+  // load. Re-checking the size every frame (cheap: skipped once it matches
+  // the last known size) makes this self-correcting instead of dependent on
+  // ResizeObserver's delivery timing.
+  let lastWidth = 0;
+  let lastHeight = 0;
   function resize() {
     const { clientWidth, clientHeight } = mount;
     if (!clientWidth || !clientHeight) return;
+    if (clientWidth === lastWidth && clientHeight === lastHeight) return;
+    lastWidth = clientWidth;
+    lastHeight = clientHeight;
     renderer.setSize(clientWidth, clientHeight, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     camera.aspect = clientWidth / clientHeight;
@@ -194,6 +211,10 @@ export function initHeroGraph3D(
     if (disposed) return;
     raf = requestAnimationFrame(frame);
     if (!visible) return;
+
+    // Self-correcting: catches the mount going from 0-size (hidden behind the
+    // SVG) to its real size without depending on ResizeObserver's timing.
+    resize();
 
     // performance.now() is already relative to navigation start, not to when
     // this scene happened to initialize — deliberately NOT rebased to a local
