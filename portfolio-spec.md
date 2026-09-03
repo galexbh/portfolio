@@ -28,7 +28,7 @@
 Site Reliability Engineer
 
 **Subheadline:**
-Construyo infraestructura confiable, automatizada y observable en entornos regulados y multi-nube.
+Construyo infraestructura confiable, automatizada y observable.
 
 **CTA sugerido:** botón "Ver proyectos" + botón "Contacto" / enlace a CV descargable.
 
@@ -36,7 +36,7 @@ Construyo infraestructura confiable, automatizada y observable en entornos regul
 
 ## 3. Sección About / Sobre mí
 
-Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y gestión de incidentes bajo ITIL, en entornos bancarios regulados. Actualmente trabajo como **Site Reliability Engineer**, dentro del equipo de plataformas.
+Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y manejo de prácticas ITIL. Actualmente trabajo como **Site Reliability Engineer**, dentro del equipo de plataformas.
 
 En el rol de SRE cubro cinco vertientes principales:
 
@@ -46,7 +46,7 @@ En el rol de SRE cubro cinco vertientes principales:
 - **Contenedores**: administración de clústeres OpenShift.
 - **Automatización**: playbooks de Ansible para configuración e infraestructura.
 
-Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones bancarias, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
+Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones críticas, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
 
 **Nota para el sitio:** esta sección puede acompañarse de un bloque visual tipo "Stack actual" con logos/íconos de AWS, Azure, Azure DevOps, Argo CD, Dynatrace, OpenShift y Ansible.
 
@@ -256,7 +256,7 @@ Bloque simple con:
 
 - El **stack actual** (AWS, Azure, Azure DevOps, Argo CD, Dynatrace, OpenShift, Ansible) debe tener presencia visual fuerte en Hero o About — es lo que más identifica el perfil de SRE hoy.
 - Las métricas ya cerradas (-35% MTTR, -20% incidentes de seguridad) sirven como prueba social mientras se completan las del rol SRE actual; usarlas en la sección Hero o como "highlights" numéricos (contadores animados, por ejemplo).
-- El trasfondo en banca regulada (aplicaciones bancarias críticas, ITIL, auditoría) es diferenciador frente a otros perfiles SRE junior/mid — vale la pena un badge o sección corta tipo "Experiencia en entornos regulados".
+- El trasfondo en aplicaciones críticas, ITIL y auditoría es diferenciador frente a otros perfiles SRE junior/mid — vale la pena un badge o sección corta tipo "Experiencia en entornos críticos". La narrativa general del sitio (hero, about, badge) se mantiene deliberadamente agnóstica de industria — no se presenta como especialista único en banca — aunque los proyectos empresariales concretos siguen describiendo con precisión el contexto bancario real en el que ocurrieron (ver sección 6.1).
 - Progresión de carrera (Técnico Jr → DevOps → Administrador de Aplicaciones → SRE) funciona bien como timeline visual, mostrando crecimiento continuo en infraestructura y confiabilidad.
 - La separación **Empresarial vs. Personal/OSS** en Projects resuelve la ausencia de repos públicos del trabajo (confidencialidad) sin perder credibilidad: los proyectos empresariales muestran el impacto real (métricas, escala bancaria), mientras que OpenSight y zabbix-installation demuestran código propio y verificable en GitHub.
 - Recordar: **AWS no formó parte de las responsabilidades del rol de Administrador de Aplicaciones** — pertenece únicamente al stack del rol SRE actual y al rol previo de Ingeniero DevOps en Punto HN. No mezclar esa tecnología en la card/timeline del rol de Administrador de Aplicaciones.

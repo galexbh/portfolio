@@ -12,15 +12,15 @@ Astro (static site, no server runtime). Deploy target: Cloudflare Pages, custom 
 
 ## Users
 
-Recruiters, hiring managers, and technical leads (primarily at banks, fintechs, and regulated-industry companies in Centroamérica and remote/LatAm markets) evaluating Gabriel Barrientos (galexbh) for SRE/DevOps/infrastructure roles. Secondary audience: peers/engineers who land on the site via GitHub or LinkedIn and want to see real project depth.
+Recruiters, hiring managers, and technical leads (across industries, in Centroamérica and remote/LatAm markets) evaluating Gabriel Barrientos (galexbh) for SRE/DevOps/infrastructure roles. Secondary audience: peers/engineers who land on the site via GitHub or LinkedIn and want to see real project depth.
 
 ## Product Purpose
 
-A single-page portfolio that proves Gabriel is a credible, currently-practicing SRE with real regulated-banking infrastructure experience (cloud, CI/CD, observability, containers, automation), makes him easy to contact, and gives visitors a fast path to his real code (GitHub) and CV.
+A single-page portfolio that proves Gabriel is a credible, currently-practicing SRE with real production infrastructure experience (cloud, CI/CD, observability, containers, automation), makes him easy to contact, and gives visitors a fast path to his real code (GitHub) and CV.
 
 ## Positioning
 
-Not a generic "full-stack developer" portfolio template. The differentiator is regulated-banking SRE experience (ITIL incident governance, RCA, audits, critical banking application uptime) combined with a concrete current stack (AWS/Azure, Azure DevOps + ArgoCD, Dynatrace, OpenShift, Ansible) — a profile most junior/mid SRE portfolios cannot credibly claim.
+Not a generic "full-stack developer" portfolio template. The differentiator is SRE experience in critical-systems environments (ITIL practices, RCA, incident governance, production uptime for critical applications) combined with a concrete current stack (AWS/Azure, Azure DevOps + ArgoCD, Dynatrace, OpenShift, Ansible) — a profile most junior/mid SRE portfolios cannot credibly claim. Positioning was deliberately generalized (2026-09-03, at Gabriel's request) away from a banking/regulated-industry-specific framing to read as broadly applicable SRE credibility rather than a single-sector specialization.
 
 ## Operating Context
 
@@ -46,7 +46,7 @@ Not a generic "full-stack developer" portfolio template. The differentiator is r
 ## Product Principles
 
 1. Content authority is `portfolio-spec.md` — never invent dates, metrics, or stack claims not present there.
-2. Prove regulated-banking SRE credibility concretely (real stack names, real metrics like -35% MTTR, -20% incidents) rather than generic buzzwords.
+2. Prove SRE credibility concretely (real stack names, real metrics like -35% MTTR, -20% incidents) rather than generic buzzwords or industry-specific gatekeeping.
 3. Keep enterprise vs. personal/OSS projects visually distinct so confidentiality is honest, not evasive.
 4. Motion and visual richness serve scanability and credibility; they never bury the CTA (contact / view projects) or slow the page down.
 5. Real photography of Gabriel only for identity — no AI-generated likeness.

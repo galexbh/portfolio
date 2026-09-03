@@ -5,8 +5,8 @@ email: info@galexbh.dev
 domain: galexbh.dev
 github: https://github.com/galexbh
 heroHeadline: Site Reliability Engineer
-heroSubheadline: Construyo infraestructura confiable, automatizada y observable en entornos regulados y multi-nube.
-aboutIntro: Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y gestión de incidentes bajo ITIL, en entornos bancarios regulados. Actualmente trabajo como Site Reliability Engineer, dentro del equipo de plataformas.
+heroSubheadline: Construyo infraestructura confiable, automatizada y observable.
+aboutIntro: Ingeniero en Sistemas con más de 3 años de experiencia en infraestructura, automatización y manejo de prácticas ITIL. Actualmente trabajo como Site Reliability Engineer, dentro del equipo de plataformas.
 aboutLeadIn: 'En el rol de SRE cubro cinco vertientes principales:'
 vertientes:
   - label: Cloud
@@ -19,8 +19,8 @@ vertientes:
     detail: administración de clústeres OpenShift.
   - label: Automatización
     detail: playbooks de Ansible para configuración e infraestructura.
-aboutClosing: Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones bancarias, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
-regulatedBadge: Experiencia en entornos regulados
+aboutClosing: Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL) y administración de aplicaciones críticas, sistemas Linux/Windows, y seguridad perimetral — combinando confiabilidad medible, observabilidad end-to-end y automatización as-code.
+regulatedBadge: Experiencia en entornos críticos
 capabilityNodes:
   - id: cloud
     label: Cloud

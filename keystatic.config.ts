@@ -33,7 +33,7 @@ export default config({
           { label: 'Vertientes', itemLabel: (p) => p.fields.label.value || 'Vertiente' }
         ),
         aboutClosing: fields.text({ label: 'Sobre mí — párrafo de cierre', multiline: true }),
-        regulatedBadge: fields.text({ label: 'Badge de entornos regulados' }),
+        regulatedBadge: fields.text({ label: 'Badge de entornos críticos' }),
 
         capabilityNodes: fields.array(
           fields.object({
