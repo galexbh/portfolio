@@ -28,10 +28,10 @@ vertientes:
   - label: Automatización
     detail: playbooks de Ansible para configuración e infraestructura.
 aboutClosing: >-
-  Esta base se apoya en experiencia previa en gestión de incidentes (RCA, ITIL)
-  y administración de aplicaciones críticas, sistemas Linux/Windows, y seguridad
-  perimetral — combinando confiabilidad medible, observabilidad end-to-end y
-  automatización as-code.
+  Esta base se complementa con experiencia previa en gestión de incidentes bajo
+  marcos ITIL, administración de aplicaciones críticas en entornos Linux y
+  Windows, y seguridad perimetral — un recorrido que reforzó mi enfoque en
+  confiabilidad medible, observabilidad end-to-end y automatización as-code.
 regulatedBadge: Experiencia en entornos críticos
 capabilityNodes:
   - id: cloud
