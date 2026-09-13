@@ -17,6 +17,15 @@
         ],
         "createdAt": "2026-09-13T13:46:22.536Z",
         "reason": "print-only paper background for /cv @media print override, not part of the dark UI palette"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "monospace')",
+        "files": [
+          "src/components/Hero.astro"
+        ],
+        "createdAt": "2026-09-13T23:08:18.522Z",
+        "reason": "console.log styling string for the hidden easter egg, only visible in devtools console — not page-rendered typography, no DESIGN.md relevance"
       }
     ]
   }
