@@ -8,6 +8,15 @@
         "value": "rgba(34, 211, 238, 0.35)",
         "createdAt": "2026-09-03T10:41:03.922Z",
         "reason": "intentional: activates the previously-unused --accent-strong cyan token as the 'Personal' blog category accent, distinct from mint (SRE/DevOps) and reserved amber (restricted/enterprise)"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fff",
+        "files": [
+          "src/styles/cv.css"
+        ],
+        "createdAt": "2026-09-13T13:46:22.536Z",
+        "reason": "print-only paper background for /cv @media print override, not part of the dark UI palette"
       }
     ]
   }

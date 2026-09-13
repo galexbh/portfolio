@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import '../styles/cv.css';
+import { getMeta, getEducation } from '../lib/keystatic-content';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const meta = await getMeta();
+const education = await getEducation();
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Extiende el ProfilePage/Person de Base.astro con los datos propios de un CV:
+// título obtenido y empleador actual, útiles para rich results y ATS que leen JSON-LD.
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: canonicalURL.toString(),
+  inLanguage: 'es',
+  mainEntity: {
+    '@type': 'Person',
+    name: meta.name,
+    url: canonicalURL.toString(),
+    jobTitle: meta.role,
+    email: meta.email,
+    address: {
+      '@type': 'Place',
+      name: meta.location,
+    },
+    alumniOf: {
+      '@type': 'CollegeOrUniversity',
+      name: education.institution,
+    },
+    sameAs: [meta.github],
+  },
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={meta.name} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={meta.name} />
+    <meta property="og:locale" content="es_HN" />
+
+    <link rel="preload" href="/fonts/overpass-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jbm-500.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

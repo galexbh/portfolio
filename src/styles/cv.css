@@ -1,0 +1,234 @@
+/* Estilos exclusivos de /cv. global.css ya trae tokens, tipografía y .btn;
+   aquí solo el layout de documento y la hoja de impresión. */
+
+.cv-page {
+  min-height: 100vh;
+  padding: 48px 0 96px;
+}
+
+.cv-shell {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.cv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.cv-toolbar-note {
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+.cv-header {
+  margin-bottom: 44px;
+}
+
+.cv-name {
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.5rem);
+}
+
+.cv-role {
+  color: var(--accent);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.cv-contact-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.cv-contact-line a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cv-contact-line a:hover {
+  color: var(--accent);
+}
+
+.cv-section {
+  margin-bottom: 36px;
+}
+
+.cv-section h2 {
+  font-size: 1.05rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+.cv-summary {
+  color: var(--text-dim);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.cv-entry {
+  margin-bottom: 20px;
+}
+
+.cv-entry:last-child {
+  margin-bottom: 0;
+}
+
+.cv-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cv-entry-head h3 {
+  font-size: 15.5px;
+}
+
+.cv-entry-period {
+  font-size: 12px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.cv-entry-company {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin: 2px 0 10px;
+}
+
+.cv-entry-bullets {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  display: grid;
+  gap: 5px;
+}
+
+.cv-skills-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.cv-skill-row {
+  display: flex;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.cv-skill-cat {
+  flex: 0 0 190px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cv-skill-items {
+  color: var(--text-dim);
+}
+
+.cv-cert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.cv-cert-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+  flex-wrap: wrap;
+}
+
+.cv-cert-name {
+  color: var(--text);
+}
+
+.cv-cert-meta {
+  color: var(--text-faint);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.cv-references-note {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
+/* ---------- Impresión ---------- */
+
+@page {
+  size: letter;
+  margin: 2cm;
+}
+
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-elevated-2: #ffffff;
+    --line: #d8dde2;
+    --line-strong: #b9c1c8;
+    --text: #111418;
+    --text-dim: #333a40;
+    --text-faint: #55606a;
+    --accent: #004f90;
+    --accent-dim: #eef4fa;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .cv-page {
+    padding: 0;
+  }
+
+  .cv-shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  .cv-section,
+  .cv-entry {
+    break-inside: avoid;
+  }
+
+  .cv-section h2 {
+    break-after: avoid;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  /* Los enlaces son inútiles en papel: se imprime la URL para que quede legible. */
+  .cv-contact-line a[href^='http']::after,
+  .cv-cert-meta a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    color: #55606a;
+  }
+}

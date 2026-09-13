@@ -17,6 +17,7 @@ export default config({
         metaRole: fields.text({ label: 'Rol actual' }),
         location: fields.text({ label: 'Ubicación' }),
         email: fields.text({ label: 'Email de contacto' }),
+        phone: fields.text({ label: 'Teléfono', validation: { isRequired: false } }),
         domain: fields.text({ label: 'Dominio' }),
         github: fields.url({ label: 'URL de GitHub' }),
         linkedin: fields.url({ label: 'URL de LinkedIn', validation: { isRequired: false } }),
@@ -38,6 +39,9 @@ export default config({
         aboutClosing: fields.text({ label: 'Sobre mí — párrafo de cierre', multiline: true }),
         regulatedBadge: fields.text({ label: 'Badge de entornos críticos' }),
 
+        cvSummary: fields.text({ label: 'CV — Perfil profesional', multiline: true }),
+        cvUpdated: fields.text({ label: 'CV — Sello de última actualización' }),
+
         capabilityNodes: fields.array(
           fields.object({
             id: fields.text({ label: 'ID' }),
@@ -53,6 +57,10 @@ export default config({
         educationTalks: fields.array(fields.text({ label: 'Ponencia' }), {
           label: 'Educación — ponencias',
           itemLabel: (props) => props.value || 'Ponencia',
+        }),
+        educationVerificationUrl: fields.url({
+          label: 'Educación — URL de verificación del título',
+          validation: { isRequired: false },
         }),
       },
     }),
@@ -131,6 +139,10 @@ export default config({
         order: fields.integer({ label: 'Orden', defaultValue: 0 }),
         name: fields.slug({ name: { label: 'Certificación' } }),
         validity: fields.text({ label: 'Vigencia' }),
+        credentialUrl: fields.url({
+          label: 'URL de la credencial',
+          validation: { isRequired: false },
+        }),
       },
     }),
 

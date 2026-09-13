@@ -1,0 +1,41 @@
+---
+import { getMeta } from '../../lib/keystatic-content';
+
+const meta = await getMeta();
+
+function formatUrl(url: string) {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
+---
+
+<header class="cv-header">
+  <h1 class="cv-name">{meta.name}</h1>
+  <p class="cv-role mono">{meta.role}</p>
+  <p class="cv-contact-line mono">
+    <span>{meta.location}</span>
+    <span>·</span>
+    <a href={`mailto:${meta.email}`}>{meta.email}</a>
+    {meta.phone && (
+      <>
+        <span>·</span>
+        <span>{meta.phone}</span>
+      </>
+    )}
+    <span>·</span>
+    <a href={`https://${meta.domain}`} target="_blank" rel="noopener noreferrer">
+      {meta.domain}
+    </a>
+    {meta.site.linkedin && (
+      <>
+        <span>·</span>
+        <a href={meta.site.linkedin} target="_blank" rel="noopener noreferrer">
+          {formatUrl(meta.site.linkedin)}
+        </a>
+      </>
+    )}
+    <span>·</span>
+    <a href={meta.github} target="_blank" rel="noopener noreferrer">
+      {formatUrl(meta.github)}
+    </a>
+  </p>
+</header>

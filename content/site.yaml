@@ -2,6 +2,7 @@ metaName: Gabriel Barrientos
 metaRole: Site Reliability Engineer
 location: Tegucigalpa, Honduras
 email: info@galexbh.dev
+phone: '+504 8800-1794'
 domain: galexbh.dev
 github: https://github.com/galexbh
 linkedin: https://www.linkedin.com/in/galexbh
@@ -33,6 +34,16 @@ aboutClosing: >-
   perimetral. De ahí nace mi enfoque en confiabilidad medible, observabilidad
   end-to-end y automatización as-code.
 regulatedBadge: Experiencia en entornos críticos
+cvSummary: >-
+  Ingeniero en Sistemas con 3+ años de experiencia técnica en administración
+  de infraestructura, automatización DevOps y gestión de incidentes bajo
+  ITIL en entornos bancarios regulados. Experiencia coordinando la
+  resolución de incidentes críticos y la documentación de cumplimiento
+  junto a Arquitectura, Seguridad y Gerencia de TI, además de liderar
+  equipos técnicos junior. Busco dar el salto hacia la gestión y gobierno
+  de portafolios tecnológicos, aportando una base sólida en SDLC, prácticas
+  DevOps, ITIL y herramientas de gestión de proyectos.
+cvUpdated: Última actualización en Julio de 2026
 capabilityNodes:
   - id: cloud
     label: Cloud
@@ -55,3 +66,4 @@ educationPeriod: Feb 2018 – Sept 2024
 educationTalks:
   - Domain-Driven Design con Node.js y Express
   - Entornos de Desarrollo con Docker
+educationVerificationUrl: https://validador.unah.edu.hn/?llavePr=65EA9458-0A30-4F9C-95AC-84AFE91B546D&llavePu=E0B28A37-EE94-47A0-8BC8-C215964D3843

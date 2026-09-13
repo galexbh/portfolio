@@ -1,0 +1,12 @@
+---
+import { getCvProfile } from '../../lib/keystatic-content';
+
+const profile = await getCvProfile();
+---
+
+<div class="cv-toolbar no-print">
+  <button type="button" class="btn btn-primary" id="cv-print-btn">Imprimir / Guardar PDF</button>
+  <span class="cv-toolbar-note mono">{profile.updated}</span>
+</div>
+
+<script src="/scripts/cv-print.js" is:inline></script>

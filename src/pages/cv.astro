@@ -1,0 +1,110 @@
+---
+import Document from '../layouts/Document.astro';
+import CvHeader from '../components/cv/CvHeader.astro';
+import CvSection from '../components/cv/CvSection.astro';
+import CvActions from '../components/cv/CvActions.astro';
+import {
+  getMeta,
+  getCvProfile,
+  getExperience,
+  getSkills,
+  getCertifications,
+  getEducation,
+} from '../lib/keystatic-content';
+
+const meta = await getMeta();
+const profile = await getCvProfile();
+const experience = await getExperience();
+const skills = await getSkills();
+const certifications = await getCertifications();
+const education = await getEducation();
+---
+
+<Document
+  title={`${meta.name} — CV`}
+  description={`Currículum de ${meta.name}, ${meta.role}.`}
+>
+  <div class="cv-page">
+    <div class="cv-shell">
+      <CvActions />
+      <CvHeader />
+
+      <CvSection title="Perfil profesional">
+        <p class="cv-summary">{profile.summary}</p>
+      </CvSection>
+
+      <CvSection title="Experiencia">
+        {experience.map((role) => (
+          <div class="cv-entry">
+            <div class="cv-entry-head">
+              <h3>{role.role}</h3>
+              <span class="cv-entry-period mono">{role.period}</span>
+            </div>
+            <p class="cv-entry-company mono">{role.company} · {role.location}</p>
+            <ul class="cv-entry-bullets">
+              {role.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </div>
+        ))}
+      </CvSection>
+
+      <CvSection title="Skills">
+        <div class="cv-skills-grid">
+          {skills.map((group) => (
+            <div class="cv-skill-row">
+              <span class="cv-skill-cat">{group.category}</span>
+              <span class="cv-skill-items">{group.items.join(' · ')}</span>
+            </div>
+          ))}
+        </div>
+      </CvSection>
+
+      <CvSection title="Certificaciones y cursos">
+        <ul class="cv-cert-list">
+          {certifications.map((c) => (
+            <li>
+              <span class="cv-cert-name">{c.name}</span>
+              <span class="cv-cert-meta mono">
+                {c.validity}
+                {c.credentialUrl && (
+                  <>
+                    {' · '}
+                    <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
+                      Ver credencial
+                    </a>
+                  </>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </CvSection>
+
+      <CvSection title="Educación">
+        <div class="cv-entry">
+          <div class="cv-entry-head">
+            <h3>{education.institution}</h3>
+            <span class="cv-entry-period mono">{education.period}</span>
+          </div>
+          <p class="cv-entry-company mono">{education.degree}</p>
+          {education.verificationUrl && (
+            <p class="cv-entry-bullets">
+              <a href={education.verificationUrl} target="_blank" rel="noopener noreferrer">
+                Título verificado — consulta oficial de autenticidad
+              </a>
+            </p>
+          )}
+          {education.talks.length > 0 && (
+            <ul class="cv-entry-bullets">
+              <li><strong>Ponencias:</strong> {education.talks.join(', ')}</li>
+            </ul>
+          )}
+        </div>
+      </CvSection>
+
+      <CvSection title="Referencias">
+        <p class="cv-references-note">Referencias disponibles a solicitud.</p>
+      </CvSection>
+    </div>
+  </div>
+</Document>

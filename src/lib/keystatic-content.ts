@@ -24,6 +24,7 @@ export async function getMeta() {
     role: site.metaRole,
     location: site.location,
     email: site.email,
+    phone: site.phone || undefined,
     domain: site.domain,
     github: site.github,
     site,
@@ -66,6 +67,16 @@ export async function getEducation() {
     institution: site.educationInstitution,
     period: site.educationPeriod,
     talks: site.educationTalks,
+    verificationUrl: site.educationVerificationUrl || undefined,
+  };
+}
+
+export async function getCvProfile() {
+  const site = await reader.singletons.site.read();
+  if (!site) throw new Error('content/site.yaml is missing or failed to parse');
+  return {
+    summary: site.cvSummary,
+    updated: site.cvUpdated,
   };
 }
 
@@ -125,7 +136,11 @@ export async function getOssProjects() {
 
 export async function getCertifications() {
   const all = await reader.collections.certifications.all();
-  return bySlugOrder(all).map(({ entry }) => ({ name: entry.name, validity: entry.validity }));
+  return bySlugOrder(all).map(({ entry }) => ({
+    name: entry.name,
+    validity: entry.validity,
+    credentialUrl: entry.credentialUrl || undefined,
+  }));
 }
 
 export async function getPosts() {
