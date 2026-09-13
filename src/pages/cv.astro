@@ -18,6 +18,17 @@ const experience = await getExperience();
 const skills = await getSkills();
 const certifications = await getCertifications();
 const education = await getEducation();
+
+// Columnas pre-partidas en build, no vía CSS column-count: Chrome puede
+// perder contenido cuando ese reflow automático se combina con paginación
+// de impresión (visto en un PDF real). Con dos columnas explícitas, cada
+// una es un flujo de bloque normal y no hay ambigüedad al paginar.
+function splitInTwo<T>(items: T[]): [T[], T[]] {
+  const mid = Math.ceil(items.length / 2);
+  return [items.slice(0, mid), items.slice(mid)];
+}
+const [skillsColA, skillsColB] = splitInTwo(skills);
+const [certsColA, certsColB] = splitInTwo(certifications);
 ---
 
 <Document
@@ -50,12 +61,24 @@ const education = await getEducation();
 
       <CvSection title="Skills">
         <div class="cv-skills-grid">
-          {skills.map((group) => (
-            <div class="cv-skill-row">
-              <span class="cv-skill-cat">{group.category}</span>
-              <span class="cv-skill-items">{group.items.join(' · ')}</span>
+          <div class="cv-cols">
+            <div class="cv-col">
+              {skillsColA.map((group) => (
+                <div class="cv-skill-row">
+                  <span class="cv-skill-cat">{group.category}</span>
+                  <span class="cv-skill-items">{group.items.join(' · ')}</span>
+                </div>
+              ))}
             </div>
-          ))}
+            <div class="cv-col">
+              {skillsColB.map((group) => (
+                <div class="cv-skill-row">
+                  <span class="cv-skill-cat">{group.category}</span>
+                  <span class="cv-skill-items">{group.items.join(' · ')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </CvSection>
 
@@ -82,24 +105,46 @@ const education = await getEducation();
       </CvSection>
 
       <CvSection title="Certificaciones y cursos">
-        <ul class="cv-cert-list">
-          {certifications.map((c) => (
-            <li>
-              <span class="cv-cert-name">{c.name}</span>
-              <span class="cv-cert-meta mono">
-                {c.validity}
-                {c.credentialUrl && (
-                  <>
-                    {' · '}
-                    <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
-                      Ver credencial
-                    </a>
-                  </>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div class="cv-cert-list">
+          <div class="cv-cols">
+            <div class="cv-col">
+              {certsColA.map((c) => (
+                <div class="cv-cert-item">
+                  <span class="cv-cert-name">{c.name}</span>
+                  <span class="cv-cert-meta mono">
+                    {c.validity}
+                    {c.credentialUrl && (
+                      <>
+                        {' · '}
+                        <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
+                          Ver credencial
+                        </a>
+                      </>
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div class="cv-col">
+              {certsColB.map((c) => (
+                <div class="cv-cert-item">
+                  <span class="cv-cert-name">{c.name}</span>
+                  <span class="cv-cert-meta mono">
+                    {c.validity}
+                    {c.credentialUrl && (
+                      <>
+                        {' · '}
+                        <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
+                          Ver credencial
+                        </a>
+                      </>
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </CvSection>
     </div>
   </div>

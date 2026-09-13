@@ -67,7 +67,9 @@
 }
 
 .cv-section::after {
-  content: none;
+  /* !important: `section:not(:last-of-type)::after` en global.css tiene
+     más especificidad (0,1,2) que un simple `.cv-section::after` (0,1,1). */
+  content: none !important;
 }
 
 .cv-section h2 {
@@ -127,9 +129,19 @@
   gap: 5px;
 }
 
+/* En pantalla, .cv-cols/.cv-col no pintan caja propia (display:contents):
+   las filas quedan como si colgaran directo de .cv-skills-grid, igual que
+   antes de dividir en columnas. En impresión se activa el layout de 2
+   columnas explícitas (ver @media print) — nunca column-count/reflow
+   automático, que Chrome puede perder contenido al paginar impresión. */
 .cv-skills-grid {
   display: grid;
   gap: 10px;
+}
+
+.cv-cols,
+.cv-col {
+  display: contents;
 }
 
 .cv-skill-row {
@@ -149,14 +161,11 @@
 }
 
 .cv-cert-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
   gap: 8px;
 }
 
-.cv-cert-list li {
+.cv-cert-item {
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -291,11 +300,19 @@
     gap: 0px;
   }
 
-  /* Dos columnas: 8 categorías en 4 filas en vez de 8, ahorra media sección. */
-  .cv-skills-grid {
-    column-count: 2;
-    column-gap: 20px;
-    gap: 0;
+  /* Dos columnas explícitas (nunca column-count: Chrome puede perder
+     contenido al combinar ese reflow automático con paginación de
+     impresión — confirmado con un PDF real). Cada .cv-col es un bloque
+     normal e independiente, sin ambigüedad de layout. */
+  .cv-cols {
+    display: flex;
+    gap: 20px;
+  }
+
+  .cv-col {
+    display: block;
+    flex: 1;
+    min-width: 0;
   }
 
   .cv-skill-row {
@@ -307,15 +324,7 @@
     flex-basis: 110px;
   }
 
-  /* Igual que Skills: 5 certificaciones en 3 filas en vez de 5. */
-  .cv-cert-list {
-    display: block;
-    column-count: 2;
-    column-gap: 20px;
-    gap: 0;
-  }
-
-  .cv-cert-list li {
+  .cv-cert-item {
     display: block;
     font-size: 10px;
     break-inside: avoid;
@@ -324,9 +333,6 @@
 
   .cv-cert-meta {
     display: block;
-  }
-
-  .cv-cert-meta {
     font-size: 9px;
   }
 }
