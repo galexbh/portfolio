@@ -1,6 +1,6 @@
 ---
 import { getHero, getCapabilityNodes, getMeta } from '../lib/keystatic-content';
-import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER, layoutNodes } from '../lib/hero-graph';
+import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER, PULSE_DURATION, layoutNodes } from '../lib/hero-graph';
 
 const [hero, capabilityNodes, meta] = await Promise.all([getHero(), getCapabilityNodes(), getMeta()]);
 
@@ -22,12 +22,15 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
         <span class="status-dot" aria-hidden="true"></span>
         {meta.location} · uptime desde 2023
       </p>
+      <span class="chip visit-chip mono" data-returning-chip hidden>
+        <span class="status-dot" aria-hidden="true"></span> sesión reconectada
+      </span>
     </div>
 
     {/* Sin aria-hidden: el SVG de abajo es su propio role="img" + aria-label
        — describe los nodos de capacidad, que son contenido real, no decoración.
        aria-hidden en este wrapper los borraba del árbol de accesibilidad. */}
-    <div class="hero-graph reveal">
+    <div class="hero-graph reveal" data-pulse-ms={PULSE_DURATION * 1000}>
       <div
         class="graph-3d"
         data-graph-3d
@@ -58,19 +61,25 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
           />
         ))}
 
-        <image
-          href="/img/hero-portrait.webp"
-          x={root.x - 46}
-          y={root.y - 46}
-          width="92"
-          height="92"
-          preserveAspectRatio="xMidYMid slice"
-          clip-path="url(#avatarClip)"
-        />
-        <circle cx={root.x} cy={root.y} r="46" class="root-ring" />
-        <text x={root.x} y={root.y + 74} text-anchor="middle" class="node-label root-label mono">
-          {meta.handle}
-        </text>
+        {/* data-avatar-trigger: gatillo oculto del easter egg (ver <script> más
+           abajo). Es el único elemento del grafo que sigue visible e
+           interactivo en ambos modos (SVG y 3D) — no lleva graph-svg-enhanced,
+           y el SVG completo queda por encima del canvas 3D (z-index). */}
+        <g data-avatar-trigger>
+          <image
+            href="/img/hero-portrait.webp"
+            x={root.x - 46}
+            y={root.y - 46}
+            width="92"
+            height="92"
+            preserveAspectRatio="xMidYMid slice"
+            clip-path="url(#avatarClip)"
+          />
+          <circle cx={root.x} cy={root.y} r="46" class="root-ring" />
+          <text x={root.x} y={root.y + 74} text-anchor="middle" class="node-label root-label mono">
+            {meta.handle}
+          </text>
+        </g>
 
         {nodes.map((node) => {
           const align = node.x > root.x + 40 ? 'start' : node.x < root.x - 40 ? 'end' : 'middle';
@@ -94,10 +103,18 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
 </header>
 
 <script>
+  import type { HeroGraph3D } from '../scripts/hero-graph-3d';
+
+  // Compartido entre boot() (lo asigna) e initEasterEgg() (lo lee) — el clic
+  // sobre el avatar necesita saber si el 3D está corriendo ahora mismo.
+  let activeInstance: HeroGraph3D | null = null;
+
   function boot() {
     const heroGraph = document.querySelector<HTMLElement>('.hero-graph');
     const mount = document.querySelector<HTMLElement>('[data-graph-3d]');
     if (!heroGraph || !mount) return;
+
+    initEasterEgg(heroGraph);
 
     const raw = mount.dataset.nodes;
     if (!raw) return;
@@ -109,7 +126,6 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
     }
 
     const enhancementQuery = window.matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
-    let disposeCurrent: (() => void) | null = null;
     let starting = false;
     let generation = 0;
     let webglAvailable: boolean | null = null;
@@ -131,12 +147,12 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
       generation += 1;
       starting = false;
       setActive(false);
-      disposeCurrent?.();
-      disposeCurrent = null;
+      activeInstance?.dispose();
+      activeInstance = null;
     };
 
     const start = async () => {
-      if (starting || disposeCurrent || !enhancementQuery.matches || !canUseWebGL()) return;
+      if (starting || activeInstance || !enhancementQuery.matches || !canUseWebGL()) return;
       starting = true;
       const runGeneration = ++generation;
 
@@ -144,7 +160,7 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
         const { initHeroGraph3D } = await import('../scripts/hero-graph-3d');
         if (runGeneration !== generation || !enhancementQuery.matches) return;
 
-        const dispose = initHeroGraph3D(
+        const instance = initHeroGraph3D(
           mount,
           nodes,
           () => {
@@ -153,16 +169,16 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
           () => {
             if (runGeneration !== generation) return;
             setActive(false);
-            disposeCurrent = null;
+            activeInstance = null;
           }
         );
 
-        if (!dispose) {
+        if (!instance) {
           starting = false;
           return;
         }
 
-        disposeCurrent = dispose;
+        activeInstance = instance;
       } catch {
         if (runGeneration === generation) setActive(false);
       } finally {
@@ -194,10 +210,64 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
     });
   }
 
+  /**
+   * Easter egg: 5 clics seguidos (en menos de 600ms entre cada uno) sobre el
+   * avatar disparan un barrido de color + giro en el grafo 3D (o su
+   * respaldo en CSS si el 3D no está activo). A propósito sin affordance
+   * visual — es un huevo de pascua, no un botón.
+   */
+  function initEasterEgg(heroGraph: HTMLElement) {
+    const avatar = document.querySelector<SVGGElement>('[data-avatar-trigger]');
+    if (!avatar) return;
+
+    const CLICKS_NEEDED = 5;
+    const WINDOW_MS = 600;
+    const pulseDurationMs = Number(heroGraph.dataset.pulseMs) || 1400;
+    let clicks = 0;
+    let lastClick = 0;
+
+    avatar.addEventListener('click', () => {
+      const now = performance.now();
+      if (now - lastClick > WINDOW_MS) clicks = 0;
+      lastClick = now;
+      clicks += 1;
+      if (clicks < CLICKS_NEEDED) return;
+      clicks = 0;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      if (activeInstance) {
+        activeInstance.pulse();
+      } else {
+        heroGraph.classList.add('incident-pulse');
+        setTimeout(() => heroGraph.classList.remove('incident-pulse'), pulseDurationMs);
+      }
+
+      console.log('%c◉ incidente simulado — resuelto', 'color:#5eead4;font-family:monospace');
+    });
+  }
+
+  /** Visitante que regresa: flag en localStorage, sin red ni servidor —
+   *  puramente cosmético, no necesita ser a prueba de manipulación. */
+  function initReturningVisitor() {
+    const VISITED_KEY = 'hero-visited';
+    try {
+      const returning = localStorage.getItem(VISITED_KEY) === '1';
+      localStorage.setItem(VISITED_KEY, '1');
+      if (returning) {
+        const chip = document.querySelector<HTMLElement>('[data-returning-chip]');
+        if (chip) chip.hidden = false;
+      }
+    } catch {
+      // Storage bloqueado/privado — se ve como primera visita siempre, sin romper nada.
+    }
+  }
+
   boot();
+  initReturningVisitor();
 </script>
 
-<style define:vars={{ drawDuration: `${DRAW_DURATION}s` }}>
+<style define:vars={{ drawDuration: `${DRAW_DURATION}s`, pulseDuration: `${PULSE_DURATION}s` }}>
   .hero {
     padding-top: 160px;
     padding-bottom: 96px;
@@ -249,6 +319,17 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
     gap: 10px;
     font-size: 12.5px;
     color: var(--text-faint);
+  }
+
+  .visit-chip {
+    margin-top: 12px;
+  }
+
+  /* [hidden] por sí solo puede perder contra .chip { display: inline-flex }
+     (misma especificidad, gana la hoja de estilos del autor sobre la del
+     user-agent) — ver el mismo patrón ya usado en .post-card[hidden]. */
+  .visit-chip[hidden] {
+    display: none;
   }
 
   .graph-svg {
@@ -357,6 +438,36 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
     }
   }
 
+  /* Easter egg (ver <script>): respaldo en CSS puro para cuando el grafo 3D
+     no está activo — mismo barrido de color (accent → warn → danger →
+     accent) que hace hero-graph-3d.ts con las materiales de three.js. */
+  @keyframes incidentPulse {
+    0%, 100% {
+      stroke: var(--accent);
+    }
+    25% {
+      stroke: var(--warn);
+    }
+    50% {
+      stroke: var(--danger);
+    }
+    75% {
+      stroke: var(--warn);
+    }
+  }
+
+  .hero-graph.incident-pulse .node-dot {
+    animation: incidentPulse var(--pulseDuration) ease-in-out;
+  }
+
+  .hero-graph.incident-pulse .edge {
+    animation: incidentPulse var(--pulseDuration) ease-in-out;
+  }
+
+  .hero-graph.incident-pulse .node-halo {
+    animation: pulse 3s ease-in-out infinite, incidentPulse var(--pulseDuration) ease-in-out;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .edge {
       animation: none;
@@ -368,6 +479,14 @@ const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
     }
     .graph-3d {
       display: none;
+    }
+    /* El JS ya evita agregar .incident-pulse bajo reduced-motion, pero estas
+       reglas tienen más especificidad que las de arriba — sin este override
+       explícito, un .incident-pulse forzado igual animaría. */
+    .hero-graph.incident-pulse .node-dot,
+    .hero-graph.incident-pulse .edge,
+    .hero-graph.incident-pulse .node-halo {
+      animation: none;
     }
   }
 

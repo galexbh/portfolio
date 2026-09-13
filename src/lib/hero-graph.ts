@@ -21,6 +21,13 @@ export const DRAW_DURATION = 1.6;
 /** Retraso entre el inicio del trazo de un nodo y el siguiente, en segundos. */
 export const STAGGER = 0.15;
 
+/**
+ * Duración del easter egg del grafo (clic oculto sobre el avatar), en
+ * segundos. Compartida entre el efecto en three.js (hero-graph-3d.ts) y su
+ * respaldo en CSS puro para cuando el 3D no está activo (Hero.astro).
+ */
+export const PULSE_DURATION = 1.4;
+
 export interface HeroGraphPoint {
   x: number;
   y: number;
