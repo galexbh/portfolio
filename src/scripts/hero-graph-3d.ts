@@ -1,6 +1,7 @@
 import {
   BufferGeometry,
   CircleGeometry,
+  Color,
   Group,
   Line,
   LineBasicMaterial,
@@ -15,7 +16,13 @@ import {
   MathUtils,
   type Material,
 } from 'three';
-import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER } from '../lib/hero-graph';
+import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER, PULSE_DURATION } from '../lib/hero-graph';
+
+export interface HeroGraph3D {
+  dispose: () => void;
+  /** Easter egg: barrido de color (accent → warn → danger → accent) + un giro extra. */
+  pulse: () => void;
+}
 
 export interface HeroGraphNode {
   x: number;
@@ -60,7 +67,7 @@ export function initHeroGraph3D(
   nodesInput: HeroGraphNode[],
   onReady: () => void,
   onFail: () => void
-): (() => void) | null {
+): HeroGraph3D | null {
   const nodes = nodesInput.filter((node) => Number.isFinite(node.x) && Number.isFinite(node.y));
   if (!nodes.length) {
     onFail();
@@ -84,6 +91,10 @@ export function initHeroGraph3D(
 
   const accent = cssColor(mount, '--accent', '#5eead4');
   const background = cssColor(mount, '--bg', '#090c0f');
+  const accentColor = new Color(accent);
+  const warnColor = new Color(cssColor(mount, '--warn', '#f5b942'));
+  const dangerColor = new Color(cssColor(mount, '--danger', '#f97066'));
+  const pulseColor = new Color();
   const scene = new Scene();
   const camera = new OrthographicCamera(0, VIEWBOX.width, 0, VIEWBOX.height, 0.1, 300);
   camera.position.set(0, 0, CAMERA_Z);
@@ -216,6 +227,16 @@ export function initHeroGraph3D(
   let ready = false;
   const worldPosition = new Vector3();
 
+  // Easter egg (ver Hero.astro): `pulseStart` no-null mientras dura el barrido
+  // de color + giro extra; `null` en el estado normal (sin coste por frame).
+  let pulseStart: number | null = null;
+  let colorPulsed = false;
+  function pulse() {
+    if (disposed) return;
+    pulseStart = performance.now() / 1000;
+    requestFrame();
+  }
+
   function shouldAnimate() {
     return !disposed && pageVisible && inViewport;
   }
@@ -255,9 +276,36 @@ export function initHeroGraph3D(
     tiltX += (targetTiltX - tiltX) * PARALLAX_LERP;
     tiltY += (targetTiltY - tiltY) * PARALLAX_LERP;
     const sway = Math.sin((elapsed / SWAY_PERIOD) * Math.PI * 2) * SWAY_AMPLITUDE;
-    group.rotation.y = sway + tiltY;
+
+    // Easter egg en curso: k sube 0→1 en la primera mitad y baja 1→0 en la
+    // segunda (triangular), así que tanto el color como el giro extra
+    // arrancan y terminan exactamente en el estado normal, sin salto visible.
+    let pulseK = 0;
+    if (pulseStart !== null) {
+      const t = elapsed - pulseStart;
+      if (t >= PULSE_DURATION) {
+        pulseStart = null;
+      } else {
+        const half = PULSE_DURATION / 2;
+        pulseK = t < half ? t / half : 1 - (t - half) / half;
+      }
+    }
+    // `colorPulsed` distingue "recién terminó, hay que restaurar el color
+    // base una vez" de "nunca hubo pulso" — sin esto se copiaría accentColor
+    // en cada material, en cada frame, para siempre.
+    const justEnded = colorPulsed && pulseK === 0;
+    if (justEnded) colorPulsed = false;
+
+    group.rotation.y = sway + tiltY + pulseK * Math.PI * 2;
     group.rotation.x = tiltX;
     group.updateMatrixWorld(true);
+
+    if (pulseK > 0) {
+      // accent → warn → danger mientras k sube 0→1, y de vuelta mientras baja.
+      if (pulseK <= 0.5) pulseColor.copy(accentColor).lerp(warnColor, pulseK * 2);
+      else pulseColor.copy(warnColor).lerp(dangerColor, (pulseK - 0.5) * 2);
+      colorPulsed = true;
+    }
 
     rigs.forEach((rig, i) => {
       const delay = i * STAGGER;
@@ -270,6 +318,16 @@ export function initHeroGraph3D(
       rig.edgeMaterial.opacity = MathUtils.lerp(0.34, 0.55, depth);
       rig.dotMaterial.opacity = MathUtils.lerp(0.66, 0.9, depth);
       rig.haloMaterial.opacity = MathUtils.lerp(0.1, 0.22, depth);
+
+      if (pulseK > 0) {
+        rig.edgeMaterial.color.copy(pulseColor);
+        rig.dotMaterial.color.copy(pulseColor);
+        rig.haloMaterial.color.copy(pulseColor);
+      } else if (justEnded) {
+        rig.edgeMaterial.color.copy(accentColor);
+        rig.dotMaterial.color.copy(accentColor);
+        rig.haloMaterial.color.copy(accentColor);
+      }
     });
 
     renderer.render(scene, camera);
@@ -318,5 +376,5 @@ export function initHeroGraph3D(
 
   setPointerListening(inViewport);
   requestFrame();
-  return dispose;
+  return { dispose, pulse };
 }
