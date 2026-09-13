@@ -1,0 +1,61 @@
+---
+// Bloque de <head> compartido entre Base.astro (home/blog) y Document.astro
+// (/cv) — antes cada layout tenía su propia copia y ya habían divergido
+// (Document.astro se quedó sin og:image/twitter cards). El JSON-LD de cada
+// uno sigue siendo propio de cada layout, porque su contenido es distinto.
+interface Props {
+  title: string;
+  description: string;
+  canonicalURL: URL;
+  authorName: string;
+  imageAlt: string;
+  image?: string;
+  type?: 'website' | 'profile';
+  locale?: string;
+  /** Solo para /cv: no indexar la página (el resto del sitio sí se indexa). */
+  robotsNoIndex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalURL,
+  authorName,
+  imageAlt,
+  image = '/img/og-cover.jpg',
+  type = 'website',
+  locale = 'es_HN',
+  robotsNoIndex = false,
+} = Astro.props;
+
+const socialImageURL = new URL(image, Astro.site);
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="author" content={authorName} />
+{robotsNoIndex && <meta name="robots" content="noindex" />}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="canonical" href={canonicalURL} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:site_name" content={authorName} />
+<meta property="og:locale" content={locale} />
+<meta property="og:image" content={socialImageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageURL} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<link rel="preload" href="/fonts/overpass-600.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/jbm-500.woff2" as="font" type="font/woff2" crossorigin />

@@ -101,6 +101,13 @@ a {
   color: inherit;
 }
 
+/* El outline por defecto del user-agent es poco visible sobre --bg oscuro;
+   sin esto, navegar por teclado no muestra dónde está el foco (WCAG 2.4.7). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .mono {
   font-family: var(--mono);
 }

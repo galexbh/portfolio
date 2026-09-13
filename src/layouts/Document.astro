@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
 import '../styles/cv.css';
-import { getMeta, getEducation } from '../lib/keystatic-content';
+import SeoHead from '../components/SeoHead.astro';
+import { getMeta, getEducation, getExperience, getCertifications } from '../lib/keystatic-content';
 
 interface Props {
   title: string;
@@ -11,11 +12,28 @@ interface Props {
 const { title, description } = Astro.props;
 const meta = await getMeta();
 const education = await getEducation();
+const experience = await getExperience();
+const certifications = await getCertifications();
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
+const currentRole = experience.find((role) => role.current);
+
+const hasCredential = certifications
+  .filter((c) => c.credentialUrl)
+  .map((c) => ({
+    '@type': 'EducationalOccupationalCredential',
+    name: c.name,
+    url: c.credentialUrl,
+  }));
+
+const sameAs = [meta.github, meta.site.linkedin, meta.site.instagram, meta.site.youtube].filter(
+  (url): url is string => Boolean(url)
+);
+
 // Extiende el ProfilePage/Person de Base.astro con los datos propios de un CV:
-// título obtenido y empleador actual, útiles para rich results y ATS que leen JSON-LD.
+// título obtenido, empleador actual (worksFor) y credenciales (hasCredential),
+// útiles para rich results y ATS que leen JSON-LD.
 const personLd = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
@@ -27,6 +45,7 @@ const personLd = {
     url: canonicalURL.toString(),
     jobTitle: meta.role,
     email: meta.email,
+    telephone: meta.phone,
     address: {
       '@type': 'Place',
       name: meta.location,
@@ -35,7 +54,9 @@ const personLd = {
       '@type': 'CollegeOrUniversity',
       name: education.institution,
     },
-    sameAs: [meta.github],
+    ...(currentRole ? { worksFor: { '@type': 'Organization', name: currentRole.company } } : {}),
+    ...(hasCredential.length ? { hasCredential } : {}),
+    sameAs,
   },
 };
 ---
@@ -43,23 +64,15 @@ const personLd = {
 <!doctype html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="author" content={meta.name} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="canonical" href={canonicalURL} />
-
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="profile" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:site_name" content={meta.name} />
-    <meta property="og:locale" content="es_HN" />
-
-    <link rel="preload" href="/fonts/overpass-600.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/jbm-500.woff2" as="font" type="font/woff2" crossorigin />
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalURL={canonicalURL}
+      authorName={meta.name}
+      imageAlt={`${meta.name} — CV`}
+      type="profile"
+      robotsNoIndex
+    />
 
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   </head>

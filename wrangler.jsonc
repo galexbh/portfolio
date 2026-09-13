@@ -2,5 +2,11 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "galexbh-portfolio",
   "compatibility_date": "2026-08-31",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "CV_RATE_LIMIT",
+      "id": "dea01e0ca24b4d7f9d4942319f0bd0bc"
+    }
+  ]
 }

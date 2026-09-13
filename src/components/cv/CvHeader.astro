@@ -6,6 +6,12 @@ const meta = await getMeta();
 function formatUrl(url: string) {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
+
+// El teléfono se muestra formateado ("+504 8800-1794") pero tel: solo
+// admite dígitos y un '+' inicial.
+function toTelHref(phone: string) {
+  return `tel:${phone.replace(/[^\d+]/g, '')}`;
+}
 ---
 
 <header class="cv-header">
@@ -13,27 +19,27 @@ function formatUrl(url: string) {
   <p class="cv-role mono">{meta.role}</p>
   <p class="cv-contact-line mono">
     <span>{meta.location}</span>
-    <span>·</span>
+    <span aria-hidden="true">·</span>
     <a href={`mailto:${meta.email}`}>{meta.email}</a>
     {meta.phone && (
       <>
-        <span>·</span>
-        <span>{meta.phone}</span>
+        <span aria-hidden="true">·</span>
+        <a href={toTelHref(meta.phone)}>{meta.phone}</a>
       </>
     )}
-    <span>·</span>
+    <span aria-hidden="true">·</span>
     <a href={`https://${meta.domain}`} target="_blank" rel="noopener noreferrer">
       {meta.domain}
     </a>
     {meta.site.linkedin && (
       <>
-        <span>·</span>
+        <span aria-hidden="true">·</span>
         <a href={meta.site.linkedin} target="_blank" rel="noopener noreferrer">
           {formatUrl(meta.site.linkedin)}
         </a>
       </>
     )}
-    <span>·</span>
+    <span aria-hidden="true">·</span>
     <a href={meta.github} target="_blank" rel="noopener noreferrer">
       {formatUrl(meta.github)}
     </a>

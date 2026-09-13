@@ -15,7 +15,7 @@
 
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref') || undefined;
-    const body = JSON.stringify({ type: 'print', ref });
+    const body = JSON.stringify({ ref });
 
     navigator.sendBeacon('/api/cv-event', new Blob([body], { type: 'application/json' }));
   }

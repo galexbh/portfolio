@@ -26,6 +26,12 @@
   color: var(--text-faint);
 }
 
+.cv-noscript-note {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin: -24px 0 32px;
+}
+
 .cv-header {
   margin-bottom: 44px;
 }
@@ -47,6 +53,7 @@
   margin-top: 16px;
   font-size: 13px;
   color: var(--text-dim);
+  overflow-wrap: anywhere;
 }
 
 .cv-contact-line a {
@@ -105,7 +112,23 @@
 }
 
 .cv-entry-head h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15.5px;
+}
+
+.cv-current-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  background: var(--accent-dim);
+  padding: 2px 7px;
+  border-radius: 999px;
 }
 
 .cv-entry-period {
@@ -129,19 +152,31 @@
   gap: 5px;
 }
 
-/* En pantalla, .cv-cols/.cv-col no pintan caja propia (display:contents):
-   las filas quedan como si colgaran directo de .cv-skills-grid, igual que
-   antes de dividir en columnas. En impresión se activa el layout de 2
-   columnas explícitas (ver @media print) — nunca column-count/reflow
-   automático, que Chrome puede perder contenido al paginar impresión. */
-.cv-skills-grid {
-  display: grid;
-  gap: 10px;
+.cv-entry-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.cv-cols,
-.cv-col {
-  display: contents;
+.cv-metric {
+  font-size: 11.5px;
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  background: var(--accent-dim);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+
+/* Grid real de 2 columnas en pantalla Y en impresión (antes solo aplicaba
+   al imprimir vía wrappers con display:contents en pantalla — dejaba media
+   sección en blanco en desktop). Colapsa a 1 columna en móvil más abajo. */
+.cv-skills-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 24px;
+  row-gap: 10px;
 }
 
 .cv-skill-row {
@@ -151,18 +186,26 @@
 }
 
 .cv-skill-cat {
-  flex: 0 0 190px;
+  flex: 1 0 auto;
+  max-width: 140px;
+  margin: 0;
   color: var(--text);
   font-weight: 600;
 }
 
 .cv-skill-items {
+  margin: 0;
   color: var(--text-dim);
 }
 
 .cv-cert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 24px;
+  row-gap: 8px;
 }
 
 .cv-cert-item {
@@ -181,6 +224,37 @@
   color: var(--text-faint);
   font-size: 12px;
   white-space: nowrap;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .cv-shell {
+    padding: 0 16px;
+  }
+
+  .cv-skills-grid,
+  .cv-cert-list {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-skill-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cv-skill-cat {
+    max-width: none;
+  }
+
+  .cv-cert-item {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cv-cert-meta {
+    white-space: normal;
+  }
 }
 
 /* ---------- Impresión ---------- */
@@ -285,6 +359,11 @@
     font-size: 10.5px;
   }
 
+  .cv-current-label {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+
   .cv-entry-period {
     font-size: 9px;
   }
@@ -300,19 +379,24 @@
     gap: 0px;
   }
 
-  /* Dos columnas explícitas (nunca column-count: Chrome puede perder
-     contenido al combinar ese reflow automático con paginación de
-     impresión — confirmado con un PDF real). Cada .cv-col es un bloque
-     normal e independiente, sin ambigüedad de layout. */
-  .cv-cols {
-    display: flex;
-    gap: 20px;
+  .cv-entry-metrics {
+    gap: 5px;
+    margin-top: 3px;
   }
 
-  .cv-col {
-    display: block;
-    flex: 1;
-    min-width: 0;
+  .cv-metric {
+    font-size: 8.5px;
+    padding: 1px 5px;
+  }
+
+  /* Grid de 2 columnas explícitas, nunca column-count (multi-columna con
+     reflow automático): Chrome puede perder contenido al combinarlo con
+     paginación de impresión — confirmado con un PDF real en una ronda
+     anterior. CSS Grid no tiene ese problema porque no reflowea/balancea
+     columnas, solo ubica cada item en su celda. */
+  .cv-skills-grid {
+    column-gap: 16px;
+    row-gap: 0;
   }
 
   .cv-skill-row {
@@ -321,14 +405,18 @@
   }
 
   .cv-skill-cat {
-    flex-basis: 110px;
+    max-width: 110px;
+  }
+
+  .cv-cert-list {
+    column-gap: 16px;
+    row-gap: 3px;
   }
 
   .cv-cert-item {
     display: block;
     font-size: 10px;
     break-inside: avoid;
-    margin-bottom: 3px;
   }
 
   .cv-cert-meta {
