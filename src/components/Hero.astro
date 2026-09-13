@@ -35,7 +35,7 @@ const nodes = capabilityNodes.map((node, i) => {
       <div
         class="graph-3d"
         data-graph-3d
-        data-nodes={JSON.stringify(nodes.map((n) => ({ label: n.label, detail: n.detail, x: n.x, y: n.y })))}
+        data-nodes={JSON.stringify(nodes.map((n) => ({ x: n.x, y: n.y })))}
       >
       </div>
       <svg viewBox="0 0 460 600" class="graph-svg" role="img" aria-label="Mapa de topología de capacidades de Gabriel Barrientos">
@@ -99,7 +99,7 @@ const nodes = capabilityNodes.map((node, i) => {
 
     const raw = mount.dataset.nodes;
     if (!raw) return;
-    let nodes: { label: string; detail: string; x: number; y: number }[];
+    let nodes: { x: number; y: number }[];
     try {
       nodes = JSON.parse(raw);
     } catch {

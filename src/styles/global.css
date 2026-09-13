@@ -226,6 +226,19 @@ h2 {
   background: var(--bg-elevated);
 }
 
+/* Chip de categoría de post, compartido entre /blog y /blog/[slug]. */
+.post-chip {
+  font-size: 10.5px;
+  padding: 3px 9px;
+  color: var(--accent);
+  border-color: rgba(94, 234, 212, 0.35);
+}
+
+.post-chip-personal {
+  color: var(--accent-strong);
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);

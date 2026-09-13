@@ -17,8 +17,6 @@ import {
 } from 'three';
 
 export interface HeroGraphNode {
-  label: string;
-  detail: string;
   x: number;
   y: number;
 }

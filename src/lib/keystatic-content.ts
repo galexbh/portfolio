@@ -8,6 +8,29 @@ import config from '../../keystatic.config';
 // here regardless of what keystatic.config.ts declares for the admin.
 const reader = createReader(process.cwd(), { ...config, storage: { kind: 'local' } });
 
+/**
+ * A single page render can call several `get*` functions that each read the
+ * same singleton/collection off disk (e.g. `/` reads the `site` singleton via
+ * Base, Nav, Hero, About, Education and Contact). Memoizing the read promise
+ * collapses those into one actual read+parse per build/request.
+ *
+ * Gated to production: in `astro dev` the module stays warm across requests,
+ * so caching here would mean editing `content/` wouldn't show up without a
+ * restart.
+ */
+function memo<T>(fn: () => Promise<T>): () => Promise<T> {
+  if (!import.meta.env.PROD) return fn;
+  let cached: Promise<T> | null = null;
+  return () => (cached ??= fn());
+}
+
+const readSite = memo(() => reader.singletons.site.read());
+const readExperience = memo(() => reader.collections.experience.all());
+const readSkillGroups = memo(() => reader.collections.skillGroups.all());
+const readEnterpriseProjects = memo(() => reader.collections.enterpriseProjects.all());
+const readOssProjects = memo(() => reader.collections.ossProjects.all());
+const readCertifications = memo(() => reader.collections.certifications.all());
+
 function bySlugOrder<T extends { entry: { order?: number | null } | null }>(entries: T[]) {
   return entries
     .filter((e): e is T & { entry: NonNullable<T['entry']> } => e.entry !== null)
@@ -26,7 +49,7 @@ function required<T>(value: T | null, message: string): T {
 }
 
 export async function getMeta() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   const github = required(site.github, 'content/site.yaml: github is required');
   const handle = new URL(github).pathname.replace(/^\//, '');
@@ -44,7 +67,7 @@ export async function getMeta() {
 }
 
 export async function getHero() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   return {
     headline: site.heroHeadline,
@@ -55,13 +78,13 @@ export async function getHero() {
 }
 
 export async function getCapabilityNodes() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   return site.capabilityNodes.map((n) => ({ ...n, status: 'healthy' as const }));
 }
 
 export async function getAbout() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   return {
     paragraphs: [site.aboutIntro, site.aboutLeadIn],
@@ -72,7 +95,7 @@ export async function getAbout() {
 }
 
 export async function getEducation() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   return {
     degree: site.educationDegree,
@@ -84,7 +107,7 @@ export async function getEducation() {
 }
 
 export async function getCvProfile() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   return {
     summary: site.cvSummary,
@@ -93,7 +116,7 @@ export async function getCvProfile() {
 }
 
 export async function getContact() {
-  const site = await reader.singletons.site.read();
+  const site = await readSite();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
   const github = required(site.github, 'content/site.yaml: github is required');
   const handle = new URL(github).pathname.replace(/^\//, '');
@@ -108,7 +131,7 @@ export async function getContact() {
 }
 
 export async function getExperience() {
-  const all = await reader.collections.experience.all();
+  const all = await readExperience();
   return bySlugOrder(all).map(({ entry }) => ({
     role: entry.role,
     company: entry.company,
@@ -121,12 +144,12 @@ export async function getExperience() {
 }
 
 export async function getSkills() {
-  const all = await reader.collections.skillGroups.all();
+  const all = await readSkillGroups();
   return bySlugOrder(all).map(({ entry }) => ({ category: entry.category, items: entry.items }));
 }
 
 export async function getEnterpriseProjects() {
-  const all = await reader.collections.enterpriseProjects.all();
+  const all = await readEnterpriseProjects();
   return bySlugOrder(all).map(({ entry }) => ({
     name: entry.name,
     category: entry.category,
@@ -137,7 +160,7 @@ export async function getEnterpriseProjects() {
 }
 
 export async function getOssProjects() {
-  const all = await reader.collections.ossProjects.all();
+  const all = await readOssProjects();
   return bySlugOrder(all).map(({ entry }) => ({
     name: entry.name,
     category: entry.category,
@@ -148,7 +171,7 @@ export async function getOssProjects() {
 }
 
 export async function getCertifications() {
-  const all = await reader.collections.certifications.all();
+  const all = await readCertifications();
   return bySlugOrder(all).map(({ entry }) => ({
     name: entry.name,
     validity: entry.validity,
@@ -192,6 +215,13 @@ export const postCategoryLabels: Record<string, string> = {
   'sre-devops': 'SRE / DevOps',
   personal: 'Personal',
 };
+
+/** Formats a `YYYY-MM-DD` post date as long-form Spanish (Honduras locale), UTC-anchored so it doesn't shift by the reader's timezone. */
+export function formatPostDate(iso: string): string {
+  const [year, month, day] = iso.split('-').map(Number);
+  const date = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1));
+  return date.toLocaleDateString('es-HN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
 
 /** Extracts an 11-char YouTube video ID from youtu.be, watch?v=, or /embed/ URLs. */
 export function getYoutubeId(url: string): string | null {

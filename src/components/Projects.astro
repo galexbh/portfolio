@@ -1,7 +1,11 @@
 ---
-import { getEnterpriseProjects, getOssProjects } from '../lib/keystatic-content';
+import { getEnterpriseProjects, getOssProjects, getMeta } from '../lib/keystatic-content';
 
-const [enterpriseProjects, ossProjects] = await Promise.all([getEnterpriseProjects(), getOssProjects()]);
+const [enterpriseProjects, ossProjects, meta] = await Promise.all([
+  getEnterpriseProjects(),
+  getOssProjects(),
+  getMeta(),
+]);
 ---
 
 <section id="projects">
@@ -44,7 +48,7 @@ const [enterpriseProjects, ossProjects] = await Promise.all([getEnterpriseProjec
           <span class="status-dot" aria-hidden="true"></span>
           Personales / Open Source
         </p>
-        <p class="block-note">Código disponible en GitHub — @galexbh.</p>
+        <p class="block-note">Código disponible en GitHub — @{meta.handle}.</p>
       </div>
       <div class="project-grid">
         {ossProjects.map((p) => (

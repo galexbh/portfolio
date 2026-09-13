@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { getPosts, postCategoryLabels } from '../../lib/keystatic-content';
+import { getPosts, postCategoryLabels, formatPostDate } from '../../lib/keystatic-content';
 
 const posts = await getPosts();
 const DEFAULT_COVER = '/img/blog/blog-cover-default.webp';
@@ -12,12 +12,6 @@ const filters = [
   { value: 'sre-devops', label: postCategoryLabels['sre-devops'] },
   { value: 'personal', label: postCategoryLabels.personal },
 ];
-
-function formatDate(iso: string) {
-  const [year, month, day] = iso.split('-').map(Number);
-  const date = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1));
-  return date.toLocaleDateString('es-HN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-}
 ---
 
 <Base
@@ -70,7 +64,7 @@ function formatDate(iso: string) {
                     <span class:list={['chip', 'post-chip', { 'post-chip-personal': post.category === 'personal' }]}>
                       {postCategoryLabels[post.category] ?? post.category}
                     </span>
-                    <p class="post-date mono">{formatDate(post.date)}</p>
+                    <p class="post-date mono">{formatPostDate(post.date)}</p>
                   </div>
                   <h2 class="post-title">{post.title}</h2>
                   <p class="post-excerpt">{post.excerpt}</p>
@@ -226,18 +220,6 @@ function formatDate(iso: string) {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-  }
-
-  .post-chip {
-    font-size: 10.5px;
-    padding: 3px 9px;
-    color: var(--accent);
-    border-color: rgba(94, 234, 212, 0.35);
-  }
-
-  .post-chip-personal {
-    color: var(--accent-strong);
-    border-color: rgba(34, 211, 238, 0.35);
   }
 
   .post-date {
