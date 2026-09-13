@@ -59,27 +59,6 @@ const education = await getEducation();
         </div>
       </CvSection>
 
-      <CvSection title="Certificaciones y cursos">
-        <ul class="cv-cert-list">
-          {certifications.map((c) => (
-            <li>
-              <span class="cv-cert-name">{c.name}</span>
-              <span class="cv-cert-meta mono">
-                {c.validity}
-                {c.credentialUrl && (
-                  <>
-                    {' · '}
-                    <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
-                      Ver credencial
-                    </a>
-                  </>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </CvSection>
-
       <CvSection title="Educación">
         <div class="cv-entry">
           <div class="cv-entry-head">
@@ -102,8 +81,25 @@ const education = await getEducation();
         </div>
       </CvSection>
 
-      <CvSection title="Referencias">
-        <p class="cv-references-note">Referencias disponibles a solicitud.</p>
+      <CvSection title="Certificaciones y cursos">
+        <ul class="cv-cert-list">
+          {certifications.map((c) => (
+            <li>
+              <span class="cv-cert-name">{c.name}</span>
+              <span class="cv-cert-meta mono">
+                {c.validity}
+                {c.credentialUrl && (
+                  <>
+                    {' · '}
+                    <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer">
+                      Ver credencial
+                    </a>
+                  </>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
       </CvSection>
     </div>
   </div>

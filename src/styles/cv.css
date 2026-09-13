@@ -58,8 +58,16 @@
   color: var(--accent);
 }
 
+/* global.css define `section { padding: 96px 0 }` + un divisor decorativo
+   ::after para las secciones de la home — aquí se anulan ambos, porque
+   CvSection.astro también renderiza un <section>. */
 .cv-section {
+  padding: 0;
   margin-bottom: 36px;
+}
+
+.cv-section::after {
+  content: none;
 }
 
 .cv-section h2 {
@@ -166,17 +174,11 @@
   white-space: nowrap;
 }
 
-.cv-references-note {
-  color: var(--text-dim);
-  font-size: 13.5px;
-  font-style: italic;
-}
-
 /* ---------- Impresión ---------- */
 
 @page {
   size: letter;
-  margin: 2cm;
+  margin: 1cm;
 }
 
 @media print {
@@ -196,6 +198,7 @@
   html,
   body {
     background: #fff;
+    font-size: 11px;
   }
 
   .no-print {
@@ -203,6 +206,7 @@
   }
 
   .cv-page {
+    min-height: 0;
     padding: 0;
   }
 
@@ -211,7 +215,11 @@
     padding: 0;
   }
 
-  .cv-section,
+  /* Solo cada entrada individual evita partirse; la sección completa (p.ej.
+     "Experiencia" con 4 empleos) sí puede fluir entre páginas — si se le
+     aplica break-inside:avoid a la sección entera, una sección grande que
+     no cabe en el espacio restante salta completa a la página siguiente y
+     deja media página en blanco. */
   .cv-entry {
     break-inside: avoid;
   }
@@ -224,11 +232,101 @@
     text-decoration: none;
   }
 
-  /* Los enlaces son inútiles en papel: se imprime la URL para que quede legible. */
-  .cv-contact-line a[href^='http']::after,
-  .cv-cert-meta a[href^='http']::after {
-    content: ' (' attr(href) ')';
-    font-size: 9pt;
-    color: #55606a;
+  /* Compresión de espaciados: en pantalla se prioriza aire, en papel se
+     prioriza que quepa en 1-2 páginas. */
+  .cv-header {
+    margin-bottom: 8px;
+  }
+
+  .cv-name {
+    font-size: 18px;
+  }
+
+  .cv-role {
+    font-size: 10.5px;
+    margin-top: 1px;
+  }
+
+  .cv-contact-line {
+    margin-top: 3px;
+    gap: 2px 10px;
+    font-size: 9.5px;
+  }
+
+  .cv-section {
+    margin-bottom: 6px;
+  }
+
+  .cv-section h2 {
+    font-size: 10px;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+  }
+
+  .cv-summary {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  .cv-entry {
+    margin-bottom: 4px;
+  }
+
+  .cv-entry-head h3 {
+    font-size: 10.5px;
+  }
+
+  .cv-entry-period {
+    font-size: 9px;
+  }
+
+  .cv-entry-company {
+    font-size: 9.5px;
+    margin: 0 0 2px;
+  }
+
+  .cv-entry-bullets {
+    font-size: 9.5px;
+    line-height: 1.22;
+    gap: 0px;
+  }
+
+  /* Dos columnas: 8 categorías en 4 filas en vez de 8, ahorra media sección. */
+  .cv-skills-grid {
+    column-count: 2;
+    column-gap: 20px;
+    gap: 0;
+  }
+
+  .cv-skill-row {
+    font-size: 10px;
+    break-inside: avoid;
+  }
+
+  .cv-skill-cat {
+    flex-basis: 110px;
+  }
+
+  /* Igual que Skills: 5 certificaciones en 3 filas en vez de 5. */
+  .cv-cert-list {
+    display: block;
+    column-count: 2;
+    column-gap: 20px;
+    gap: 0;
+  }
+
+  .cv-cert-list li {
+    display: block;
+    font-size: 10px;
+    break-inside: avoid;
+    margin-bottom: 3px;
+  }
+
+  .cv-cert-meta {
+    display: block;
+  }
+
+  .cv-cert-meta {
+    font-size: 9px;
   }
 }
