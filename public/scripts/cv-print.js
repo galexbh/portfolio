@@ -1,4 +1,4 @@
-// Botón "Imprimir / Guardar PDF" + aviso a /api/cv-event cuando se abre el diálogo
+// Botón "Imprimir / Guardar PDF" + aviso a /api/track cuando se abre el diálogo
 // de impresión. beforeprint dispara al ABRIR el diálogo, no al confirmar, así que
 // esto mide intención de imprimir, no una impresión confirmada.
 (() => {
@@ -15,9 +15,9 @@
 
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref') || undefined;
-    const body = JSON.stringify({ ref });
+    const body = JSON.stringify({ event: 'cv-print', ref });
 
-    navigator.sendBeacon('/api/cv-event', new Blob([body], { type: 'application/json' }));
+    navigator.sendBeacon('/api/track', new Blob([body], { type: 'application/json' }));
   }
 
   window.addEventListener('beforeprint', notifyOnce);
