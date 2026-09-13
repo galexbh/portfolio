@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
 // Ruta server-rendered (el resto del sitio queda prerenderizado como estático).
 // Recibe un beacon de public/scripts/cv-print.js cuando alguien abre el diálogo
@@ -35,7 +36,7 @@ async function sendTelegramMessage(token: string, chatId: string, text: string):
   }
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   if (!isAllowedOrigin(request.headers.get('origin'))) {
     return new Response(null, { status: 204 });
   }
@@ -55,9 +56,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const type = body.type === 'download' ? 'download' : 'print';
   const ref = sanitizeRef(body.ref);
 
-  const env = locals.runtime?.env;
-  const token = env?.TELEGRAM_BOT_TOKEN;
-  const chatId = env?.TELEGRAM_CHAT_ID;
+  const token = env.TELEGRAM_BOT_TOKEN;
+  const chatId = env.TELEGRAM_CHAT_ID;
 
   if (token && chatId) {
     const country = (request.headers.get('cf-ipcountry') ?? 'desconocido').toUpperCase();

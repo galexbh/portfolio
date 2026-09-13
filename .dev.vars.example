@@ -1,0 +1,8 @@
+# Copia este archivo a .dev.vars (ya ignorado por git) y rellena los valores reales.
+# .dev.vars solo alimenta `wrangler dev` / `npm run preview` en local.
+# En producción, los mismos nombres se configuran con:
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+#   wrangler secret put TELEGRAM_CHAT_ID
+
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
