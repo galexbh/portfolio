@@ -3,10 +3,16 @@
   "name": "galexbh-portfolio",
   "compatibility_date": "2026-08-31",
   "compatibility_flags": ["nodejs_compat"],
-  "kv_namespaces": [
+  // El binding de KV (kv_namespaces) que tenía este rate limit se dejó
+  // atómico y consistente-eventual entre colos (ver comentario en
+  // src/pages/api/cv-event.ts). El namespace KV_RATE_LIMIT
+  // (dea01e0ca24b4d7f9d4942319f0bd0bc) sigue existiendo en Cloudflare;
+  // bórralo manualmente una vez confirmado esto en producción.
+  "ratelimits": [
     {
-      "binding": "CV_RATE_LIMIT",
-      "id": "dea01e0ca24b4d7f9d4942319f0bd0bc"
+      "name": "CV_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 5, "period": 60 }
     }
   ]
 }

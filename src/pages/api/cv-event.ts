@@ -8,17 +8,27 @@ export const prerender = false;
 
 const ALLOWED_ORIGIN = 'https://galexbh.dev';
 const MAX_BODY_BYTES = 1024;
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_SECONDS = 60;
 const TELEGRAM_TIMEOUT_MS = 5000;
 
 interface CvEventBody {
   ref?: unknown;
 }
 
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return true; // sendBeacon a veces no envía Origin en same-origin
-  return origin === ALLOWED_ORIGIN;
+/**
+ * `sendBeacon` same-origin a veces no manda `Origin`, así que su ausencia no
+ * puede rechazarse — pero eso solo, sin más, deja pasar cualquier petición
+ * sin cabeceras de navegador (un `curl` recto). Los navegadores sí mandan
+ * `Sec-Fetch-Site` en toda petición fetch/beacon moderna: si llega y no es
+ * `same-origin`, es cross-site sin Origin (inusual) o un cliente no-navegador
+ * falseándola — se rechaza. Si ninguna de las dos cabeceras llega, el rate
+ * limit de abajo sigue siendo la única defensa, como ya lo era antes.
+ */
+function isAllowedRequest(request: Request): boolean {
+  const origin = request.headers.get('origin');
+  if (origin) return origin === ALLOWED_ORIGIN;
+
+  const secFetchSite = request.headers.get('sec-fetch-site');
+  return !secFetchSite || secFetchSite === 'same-origin';
 }
 
 /** Recorta, limpia saltos de línea (evitan inyectar líneas falsas en el
@@ -34,21 +44,17 @@ function sanitizeRef(ref: unknown): string | undefined {
 }
 
 /**
- * Rate limit simple por IP en una ventana fija usando KV (wrangler.jsonc:
- * binding CV_RATE_LIMIT). No es atómico —bajo ráfagas concurrentes un par de
- * peticiones de más pueden colarse— pero alcanza para frenar un flood trivial
- * (curl en loop), que es el riesgo real: sin esto, el endpoint no tenía
- * ningún límite más que el sessionStorage del cliente, trivial de saltarse.
+ * Rate limit por IP vía el binding nativo de Rate Limiting de Workers
+ * (wrangler.jsonc: ratelimits, 5 req / 60 s). Reemplaza una implementación
+ * anterior sobre KV que no era atómica (get+put separados dejaban colar
+ * ráfagas concurrentes) y que además, al ser KV de consistencia eventual
+ * entre colos, tardaba hasta ~60s en propagar un contador — casi la ventana
+ * completa, así que en la práctica limitaba bastante menos de lo que parecía.
+ * Este binding es atómico por diseño y no consume operaciones de KV.
  */
 async function checkRateLimit(ip: string): Promise<boolean> {
-  const key = `rl:${ip}`;
-  const current = await env.CV_RATE_LIMIT.get(key);
-  const count = current ? Number.parseInt(current, 10) || 0 : 0;
-  if (count >= RATE_LIMIT_MAX) return false;
-  await env.CV_RATE_LIMIT.put(key, String(count + 1), {
-    expirationTtl: RATE_LIMIT_WINDOW_SECONDS,
-  });
-  return true;
+  const { success } = await env.CV_RATE_LIMIT.limit({ key: ip });
+  return success;
 }
 
 async function sendTelegramMessage(token: string, chatId: string, text: string): Promise<void> {
@@ -70,7 +76,7 @@ async function sendTelegramMessage(token: string, chatId: string, text: string):
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  if (!isAllowedOrigin(request.headers.get('origin'))) {
+  if (!isAllowedRequest(request)) {
     return new Response(null, { status: 204 });
   }
 
