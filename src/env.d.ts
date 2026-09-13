@@ -15,4 +15,8 @@ declare module 'cloudflare:workers' {
     // Binding de KV (wrangler.jsonc) para el rate limit de /api/cv-event.
     CV_RATE_LIMIT: KVNamespaceLike;
   }
+
+  // El propio runtime de Workers expone este binding de bindings ya resueltos;
+  // no viene tipado sin instalar @cloudflare/workers-types solo por esto.
+  export const env: Env;
 }

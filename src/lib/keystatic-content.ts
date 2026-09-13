@@ -14,10 +14,22 @@ function bySlugOrder<T extends { entry: { order?: number | null } | null }>(entr
     .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0));
 }
 
+/**
+ * Keystatic tipa todo campo como potencialmente `null` (el contenido en disco
+ * podría estar vacío o mal formado), pero estos son campos obligatorios del
+ * CMS — nunca deberían estarlo en la práctica. Falla alto y claro si ocurre,
+ * en vez de dejar pasar un `null` silencioso hasta el render.
+ */
+function required<T>(value: T | null, message: string): T {
+  if (value === null) throw new Error(message);
+  return value;
+}
+
 export async function getMeta() {
   const site = await reader.singletons.site.read();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
-  const handle = new URL(site.github).pathname.replace(/^\//, '');
+  const github = required(site.github, 'content/site.yaml: github is required');
+  const handle = new URL(github).pathname.replace(/^\//, '');
   return {
     name: site.metaName,
     handle,
@@ -26,7 +38,7 @@ export async function getMeta() {
     email: site.email,
     phone: site.phone || undefined,
     domain: site.domain,
-    github: site.github,
+    github,
     site,
   };
 }
@@ -83,10 +95,11 @@ export async function getCvProfile() {
 export async function getContact() {
   const site = await reader.singletons.site.read();
   if (!site) throw new Error('content/site.yaml is missing or failed to parse');
-  const handle = new URL(site.github).pathname.replace(/^\//, '');
+  const github = required(site.github, 'content/site.yaml: github is required');
+  const handle = new URL(github).pathname.replace(/^\//, '');
   return {
     email: site.email,
-    github: site.github,
+    github,
     githubHandle: `@${handle}`,
     linkedin: site.linkedin || null,
     instagram: site.instagram || null,
@@ -150,7 +163,7 @@ export async function getPosts() {
     .map(({ slug, entry }) => ({
       slug,
       title: entry.title,
-      date: entry.date,
+      date: required(entry.date, `content/posts/${slug}: date is required`),
       category: entry.category,
       excerpt: entry.excerpt,
       cover: entry.cover ? `/img/blog/${entry.cover}` : null,
@@ -166,7 +179,7 @@ export async function getPost(slug: string) {
   return {
     slug,
     title: entry.title,
-    date: entry.date,
+    date: required(entry.date, `content/posts/${slug}: date is required`),
     category: entry.category,
     excerpt: entry.excerpt,
     cover: entry.cover ? `/img/blog/${entry.cover}` : null,
