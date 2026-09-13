@@ -1,19 +1,12 @@
 ---
 import { getHero, getCapabilityNodes, getMeta } from '../lib/keystatic-content';
+import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER, layoutNodes } from '../lib/hero-graph';
 
 const [hero, capabilityNodes, meta] = await Promise.all([getHero(), getCapabilityNodes(), getMeta()]);
 
-const root = { x: 110, y: 300 };
-const radius = 250;
-const angles = [-70, -35, 0, 35, 70];
-const nodes = capabilityNodes.map((node, i) => {
-  const rad = (angles[i] * Math.PI) / 180;
-  return {
-    ...node,
-    x: root.x + radius * Math.cos(rad),
-    y: root.y + radius * Math.sin(rad),
-  };
-});
+const root = ROOT;
+const positions = layoutNodes(capabilityNodes.length);
+const nodes = capabilityNodes.map((node, i) => ({ ...node, ...positions[i] }));
 ---
 
 <header id="top" class="hero">
@@ -31,14 +24,23 @@ const nodes = capabilityNodes.map((node, i) => {
       </p>
     </div>
 
-    <div class="hero-graph reveal" aria-hidden="true">
+    {/* Sin aria-hidden: el SVG de abajo es su propio role="img" + aria-label
+       — describe los nodos de capacidad, que son contenido real, no decoración.
+       aria-hidden en este wrapper los borraba del árbol de accesibilidad. */}
+    <div class="hero-graph reveal">
       <div
         class="graph-3d"
         data-graph-3d
         data-nodes={JSON.stringify(nodes.map((n) => ({ x: n.x, y: n.y })))}
+        aria-hidden="true"
       >
       </div>
-      <svg viewBox="0 0 460 600" class="graph-svg" role="img" aria-label="Mapa de topología de capacidades de Gabriel Barrientos">
+      <svg
+        viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
+        class="graph-svg"
+        role="img"
+        aria-label="Mapa de topología de capacidades de Gabriel Barrientos"
+      >
         <defs>
           <clipPath id="avatarClip">
             <circle cx={root.x} cy={root.y} r="46" />
@@ -52,7 +54,7 @@ const nodes = capabilityNodes.map((node, i) => {
             x2={node.x}
             y2={node.y}
             class="edge graph-svg-enhanced"
-            style={`--delay: ${i * 0.15}s`}
+            style={`--delay: ${i * STAGGER}s`}
           />
         ))}
 
@@ -75,8 +77,8 @@ const nodes = capabilityNodes.map((node, i) => {
           const labelX = node.x + (align === 'start' ? 16 : align === 'end' ? -16 : 0);
           return (
             <g class="node">
-              <circle cx={node.x} cy={node.y} r="8" class="node-dot graph-svg-enhanced" />
-              <circle cx={node.x} cy={node.y} r="15" class="node-halo graph-svg-enhanced" />
+              <circle cx={node.x} cy={node.y} r={NODE_RADIUS} class="node-dot graph-svg-enhanced" />
+              <circle cx={node.x} cy={node.y} r={HALO_RADIUS} class="node-halo graph-svg-enhanced" />
               <text x={labelX} y={node.y - 4} text-anchor={align} class="node-label mono">
                 {node.label}
               </text>
@@ -183,13 +185,19 @@ const nodes = capabilityNodes.map((node, i) => {
     }
 
     enhancementQuery.addEventListener('change', evaluate);
-    window.addEventListener('pagehide', stop, { once: true });
+    window.addEventListener('pagehide', stop);
+    // Si la página se restaura desde bfcache (botón atrás/adelante), el
+    // grafo quedó detenido por `pagehide` de la navegación anterior — sin
+    // esto el hero se quedaría en el SVG estático para siempre.
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) evaluate();
+    });
   }
 
   boot();
 </script>
 
-<style>
+<style define:vars={{ drawDuration: `${DRAW_DURATION}s` }}>
   .hero {
     padding-top: 160px;
     padding-bottom: 96px;
@@ -293,7 +301,7 @@ const nodes = capabilityNodes.map((node, i) => {
     stroke-dasharray: 6 4;
     opacity: 0.55;
     stroke-dashoffset: 200;
-    animation: draw 1.6s ease forwards;
+    animation: draw var(--drawDuration) ease forwards;
     animation-delay: var(--delay, 0s);
   }
 

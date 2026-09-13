@@ -15,6 +15,7 @@ import {
   MathUtils,
   type Material,
 } from 'three';
+import { ROOT, VIEWBOX, NODE_RADIUS, HALO_RADIUS, DRAW_DURATION, STAGGER } from '../lib/hero-graph';
 
 export interface HeroGraphNode {
   x: number;
@@ -30,14 +31,9 @@ interface NodeRig {
   edgeVertexCount: number;
 }
 
-const VIEWBOX_WIDTH = 460;
-const VIEWBOX_HEIGHT = 600;
-const ROOT_X = 110;
-const ROOT_Y = 300;
-const NODE_RADIUS = 8;
-const HALO_RADIUS = 15;
+const ROOT_X = ROOT.x;
+const ROOT_Y = ROOT.y;
 const EDGE_SEGMENTS = 32;
-const DRAW_DURATION = 1.6;
 const SWAY_AMPLITUDE = 0.025;
 const SWAY_PERIOD = 16;
 const PARALLAX_MAX = 0.035;
@@ -89,7 +85,7 @@ export function initHeroGraph3D(
   const accent = cssColor(mount, '--accent', '#5eead4');
   const background = cssColor(mount, '--bg', '#090c0f');
   const scene = new Scene();
-  const camera = new OrthographicCamera(0, VIEWBOX_WIDTH, 0, VIEWBOX_HEIGHT, 0.1, 300);
+  const camera = new OrthographicCamera(0, VIEWBOX.width, 0, VIEWBOX.height, 0.1, 300);
   camera.position.set(0, 0, CAMERA_Z);
   camera.lookAt(0, 0, 0);
   camera.updateMatrixWorld(true);
@@ -97,6 +93,13 @@ export function initHeroGraph3D(
   const group = new Group();
   group.position.set(ROOT_X, ROOT_Y, 0);
   scene.add(group);
+
+  // Mismo radio para todos los nodos, así que la geometría (a diferencia de
+  // los materiales, cuya opacidad se anima por nodo) se puede compartir en
+  // vez de recrearla una vez por nodo.
+  const backingGeometry = new CircleGeometry(NODE_RADIUS, 32);
+  const dotLoopGeometry = makeCircleLoopGeometry(NODE_RADIUS);
+  const haloLoopGeometry = makeCircleLoopGeometry(HALO_RADIUS);
 
   const rigs: NodeRig[] = nodes.map((node, i) => {
     const position = new Vector3(
@@ -123,19 +126,19 @@ export function initHeroGraph3D(
     group.add(edgeLine);
 
     const backing = new Mesh(
-      new CircleGeometry(NODE_RADIUS, 32),
+      backingGeometry,
       new MeshBasicMaterial({ color: background, transparent: true, opacity: 0.94 })
     );
     backing.position.copy(position);
     group.add(backing);
 
     const dotMaterial = new LineBasicMaterial({ color: accent, transparent: true, opacity: 0.85 });
-    const ring = new LineLoop(makeCircleLoopGeometry(NODE_RADIUS), dotMaterial);
+    const ring = new LineLoop(dotLoopGeometry, dotMaterial);
     ring.position.copy(position);
     group.add(ring);
 
     const haloMaterial = new LineBasicMaterial({ color: accent, transparent: true, opacity: 0.18 });
-    const halo = new LineLoop(makeCircleLoopGeometry(HALO_RADIUS), haloMaterial);
+    const halo = new LineLoop(haloLoopGeometry, haloMaterial);
     halo.position.copy(position);
     group.add(halo);
 
@@ -149,6 +152,15 @@ export function initHeroGraph3D(
     } satisfies NodeRig;
   });
 
+  // Cacheado en vez de leído en cada pointermove (ver más abajo): forzaba
+  // layout en cada movimiento del mouse sobre toda la página, incluso con el
+  // hero fuera de pantalla. Solo cambia por resize (real, no cada frame) o
+  // scroll, así que basta con refrescarlo en esos dos eventos.
+  let bounds: DOMRect | null = null;
+  function updateBounds() {
+    bounds = mount.getBoundingClientRect();
+  }
+
   let lastWidth = 0;
   let lastHeight = 0;
   function resize(): boolean {
@@ -159,6 +171,7 @@ export function initHeroGraph3D(
     lastHeight = clientHeight;
     renderer.setSize(clientWidth, clientHeight, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    updateBounds();
     return true;
   }
 
@@ -172,14 +185,29 @@ export function initHeroGraph3D(
   let tiltX = 0;
   let tiltY = 0;
   function onPointerMove(event: PointerEvent) {
-    const bounds = mount.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) return;
+    if (!bounds || !bounds.width || !bounds.height) return;
     const nx = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
     const ny = ((event.clientY - bounds.top) / bounds.height) * 2 - 1;
     targetTiltY = MathUtils.clamp(nx, -1, 1) * PARALLAX_MAX;
     targetTiltX = -MathUtils.clamp(ny, -1, 1) * PARALLAX_MAX * 0.6;
   }
-  window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+  // El listener de pointermove (en window, para captar el mouse en toda la
+  // página, no solo sobre el hero) solo se mantiene vivo mientras el hero
+  // está en viewport — ver viewportObserver más abajo.
+  let pointerListening = false;
+  function setPointerListening(next: boolean) {
+    if (next === pointerListening) return;
+    pointerListening = next;
+    if (next) {
+      updateBounds();
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('scroll', updateBounds, { passive: true });
+    } else {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('scroll', updateBounds);
+    }
+  }
 
   let pageVisible = document.visibilityState === 'visible';
   let inViewport = true;
@@ -209,6 +237,7 @@ export function initHeroGraph3D(
 
   const viewportObserver = new IntersectionObserver((entries) => {
     inViewport = entries.some((entry) => entry.isIntersecting);
+    setPointerListening(inViewport);
     if (!inViewport && raf) {
       cancelAnimationFrame(raf);
       raf = 0;
@@ -231,7 +260,7 @@ export function initHeroGraph3D(
     group.updateMatrixWorld(true);
 
     rigs.forEach((rig, i) => {
-      const delay = i * 0.15;
+      const delay = i * STAGGER;
       const progress = MathUtils.clamp((elapsed - delay) / DRAW_DURATION, 0, 1);
       const eased = 1 - (1 - progress) * (1 - progress);
       rig.edgeGeometry.setDrawRange(0, Math.max(0, Math.round(eased * rig.edgeVertexCount)));
@@ -271,7 +300,7 @@ export function initHeroGraph3D(
     raf = 0;
     resizeObserver.disconnect();
     viewportObserver.disconnect();
-    window.removeEventListener('pointermove', onPointerMove);
+    setPointerListening(false);
     document.removeEventListener('visibilitychange', onVisibility);
     if (!contextLost) canvas.removeEventListener('webglcontextlost', handleContextLost);
 
@@ -287,6 +316,7 @@ export function initHeroGraph3D(
     canvas.remove();
   }
 
+  setPointerListening(inViewport);
   requestFrame();
   return dispose;
 }
