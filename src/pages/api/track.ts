@@ -2,15 +2,30 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 
 // Ruta server-rendered (el resto del sitio queda prerenderizado como estático).
-// Recibe un beacon de public/scripts/cv-print.js cuando alguien abre el diálogo
-// de impresión en /cv, y lo reenvía como mensaje de Telegram.
+// Recibe beacons de dos scripts de cliente distintos —
+// public/scripts/cv-print.js (al abrir el diálogo de impresión en /cv) y
+// public/scripts/visit-ref.js (al entrar a "/" con ?ref=, p.ej. desde un
+// enlace compartido en YouTube/Facebook/LinkedIn) — y reenvía un mensaje a
+// Telegram según el tipo de evento.
 export const prerender = false;
 
 const ALLOWED_ORIGIN = 'https://galexbh.dev';
 const MAX_BODY_BYTES = 1024;
 const TELEGRAM_TIMEOUT_MS = 5000;
 
-interface CvEventBody {
+const EVENT_LABELS = {
+  'cv-print': '📄 CV — impresión',
+  'landing-visit': '🌐 Landing — visita',
+} as const;
+
+type EventKind = keyof typeof EVENT_LABELS;
+
+function isEventKind(value: unknown): value is EventKind {
+  return typeof value === 'string' && value in EVENT_LABELS;
+}
+
+interface TrackEventBody {
+  event?: unknown;
   ref?: unknown;
 }
 
@@ -45,12 +60,12 @@ function sanitizeRef(ref: unknown): string | undefined {
 
 /**
  * Rate limit por IP vía el binding nativo de Rate Limiting de Workers
- * (wrangler.jsonc: ratelimits, 5 req / 60 s). Reemplaza una implementación
- * anterior sobre KV que no era atómica (get+put separados dejaban colar
- * ráfagas concurrentes) y que además, al ser KV de consistencia eventual
- * entre colos, tardaba hasta ~60s en propagar un contador — casi la ventana
- * completa, así que en la práctica limitaba bastante menos de lo que parecía.
- * Este binding es atómico por diseño y no consume operaciones de KV.
+ * (wrangler.jsonc: ratelimits, 5 req / 60 s), compartido entre los dos
+ * tipos de evento. Una ráfaga de visitas a "/" con ref desde una IP consume
+ * el mismo cupo que las notificaciones de impresión del CV desde esa IP —
+ * para el tráfico de un portafolio personal no es un problema real, es la
+ * misma protección contra flood de siempre, cubriendo dos gatillos en vez
+ * de uno.
  */
 async function checkRateLimit(ip: string): Promise<boolean> {
   const { success } = await env.CV_RATE_LIMIT.limit({ key: ip });
@@ -66,12 +81,12 @@ async function sendTelegramMessage(token: string, chatId: string, text: string):
       signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
     });
     if (!res.ok) {
-      console.error('cv-event: Telegram sendMessage failed', res.status, await res.text());
+      console.error('track: Telegram sendMessage failed', res.status, await res.text());
     }
   } catch (err) {
     // Red caída, timeout, DNS, etc. — nunca debe tumbar la respuesta al cliente
     // (esta llamada corre en background vía waitUntil, ya se respondió 204).
-    console.error('cv-event: Telegram sendMessage threw', err);
+    console.error('track: Telegram sendMessage threw', err);
   }
 }
 
@@ -88,9 +103,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, { status: 204 });
   }
 
-  let body: CvEventBody = {};
+  let body: TrackEventBody = {};
   try {
-    body = JSON.parse(rawBody) as CvEventBody;
+    body = JSON.parse(rawBody) as TrackEventBody;
   } catch {
     return new Response(null, { status: 204 });
   }
@@ -101,6 +116,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, { status: 429 });
   }
 
+  // Antes de que existiera `event`, todo beacon a este endpoint era de
+  // impresión de CV — si un navegador manda un body en caché de antes de
+  // este deploy (sin `event`), sigue tratándose como tal en vez de perderse.
+  const event: EventKind = isEventKind(body.event) ? body.event : 'cv-print';
   const ref = sanitizeRef(body.ref);
 
   const token = env.TELEGRAM_BOT_TOKEN;
@@ -113,7 +132,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const when = new Date().toLocaleString('es-HN', { timeZone: 'America/Tegucigalpa' });
 
     const lines = [
-      '📄 CV — impresión',
+      EVENT_LABELS[event],
       `Fecha: ${when}`,
       `País: ${country}`,
       `Referer: ${referer}`,
@@ -126,7 +145,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // del Worker por una petición que ya devolvió 204 vía sendBeacon.
     locals.cfContext.waitUntil(sendTelegramMessage(token, chatId, lines.join('\n')));
   } else {
-    console.warn('cv-event: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID no configurados, evento descartado');
+    console.warn('track: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID no configurados, evento descartado');
   }
 
   return new Response(null, { status: 204 });
